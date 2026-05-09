@@ -18,6 +18,8 @@ struct TripFormView: View {
     @State private var isCalculating = false
     @State private var showSuggestions = false
     @State private var suggestionField: String?
+    @State private var showingAlert = false
+    @State private var alertMessage = ""
 
     @Query private var destinations: [FrequentDestination]
 
@@ -89,8 +91,13 @@ struct TripFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveTrip() }
-                        .disabled(purpose.isEmpty || distanceMiles.isEmpty)
+                        .disabled(purpose.isEmpty || distanceMiles.isEmpty || Double(distanceMiles) == nil)
                 }
+            }
+            .alert("", isPresented: $showingAlert) {
+                Button("OK") {}
+            } message: {
+                Text(alertMessage)
             }
             .onAppear {
                 rateCents = IRSRateService.currentYearDefaultRate
@@ -109,13 +116,14 @@ struct TripFormView: View {
             let miles = try await DistanceCalculator.calculate(origin: originAddress, destination: destinationAddress)
             distanceMiles = String(format: "%.1f", miles)
         } catch {
-            distanceMiles = ""
+            alertMessage = error.localizedDescription
+            showingAlert = true
         }
         isCalculating = false
     }
 
     private func saveTrip() {
-        let miles = Double(distanceMiles) ?? 0
+        guard let miles = Double(distanceMiles) else { return }
         let trip = Trip(
             date: date,
             purpose: purpose,
