@@ -9,7 +9,7 @@ final class AddressSearchService: NSObject, MKLocalSearchCompleterDelegate {
     override init() {
         super.init()
         completer.delegate = self
-        completer.resultTypes = .address
+        completer.resultTypes = [.address, .pointOfInterest]
     }
 
     func search(_ query: String) {

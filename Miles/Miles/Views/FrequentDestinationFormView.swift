@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import MapKit
 
 struct FrequentDestinationFormView: View {
     @Environment(\.modelContext) private var context
@@ -9,13 +10,59 @@ struct FrequentDestinationFormView: View {
     @State private var name: String = ""
     @State private var address: String = ""
     @State private var showingDuplicateAlert = false
+    @State private var searchService = AddressSearchService()
 
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Name", text: $name)
-                TextField("Address", text: $address, axis: .vertical)
-                    .lineLimit(2...4)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    TextField("Address", text: $address, axis: .vertical)
+                        .lineLimit(2...4)
+                        .onChange(of: address) { _, newValue in
+                            searchService.search(newValue)
+                        }
+
+                    if !address.isEmpty && !searchService.results.isEmpty {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(searchService.results, id: \.self) { completion in
+                                Button(action: {
+                                    address = "\(completion.title), \(completion.subtitle)"
+                                    searchService.results = []
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "mappin")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(completion.title)
+                                                .font(.body)
+                                                .foregroundStyle(.primary)
+                                            Text(completion.subtitle)
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 10)
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                Divider()
+                            }
+                        }
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color(.separator), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+                        .padding(.top, 4)
+                    }
+                }
             }
             .navigationTitle("New Destination")
             .navigationBarTitleDisplayMode(.inline)

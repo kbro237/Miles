@@ -15,7 +15,6 @@ struct SettingsView: View {
     @State private var pendingImportData: Data?
     @State private var alertMessage = ""
     @State private var showingAlert = false
-    @AppStorage("defaultOrigin") private var defaultOrigin: String = ""
 
     var body: some View {
         NavigationStack {
@@ -44,27 +43,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("Defaults") {
-                    TextField("Default Origin Address", text: $defaultOrigin, axis: .vertical)
-                        .lineLimit(2...4)
-                }
-
                 Section("Frequent Destinations") {
-                    ForEach(destinations) { dest in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(dest.name)
-                                .font(.body)
-                            Text(dest.address)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .onDelete { indexSet in
-                        for index in indexSet {
-                            context.delete(destinations[index])
-                        }
-                    }
-
                     Button("Manage Destinations") {
                         showingDestinations = true
                     }

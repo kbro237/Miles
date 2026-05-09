@@ -185,16 +185,23 @@ struct AutocompleteAddressField: View {
                             field = nil
                             searchService.results = []
                         }) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(dest.name)
-                                    .font(.body)
-                                    .foregroundStyle(.primary)
-                                Text(dest.address)
+                            HStack(spacing: 8) {
+                                Image(systemName: "star.fill")
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(.tint)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(dest.name)
+                                        .font(.body)
+                                        .foregroundStyle(.primary)
+                                    Text(dest.address)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 10)
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         Divider()
@@ -207,27 +214,36 @@ struct AutocompleteAddressField: View {
                             field = nil
                             searchService.results = []
                         }) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(completion.title)
-                                    .font(.body)
-                                    .foregroundStyle(.primary)
-                                Text(completion.subtitle)
+                            HStack(spacing: 8) {
+                                Image(systemName: "mappin")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(completion.title)
+                                        .font(.body)
+                                        .foregroundStyle(.primary)
+                                    Text(completion.subtitle)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 10)
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         Divider()
                     }
                 }
                 .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color(.separator), lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color(.separator), lineWidth: 1)
                 )
-                .cornerRadius(8)
+                .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+                .padding(.top, 4)
             }
         }
     }

@@ -5,24 +5,81 @@ struct FrequentDestinationListView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \FrequentDestination.name) private var destinations: [FrequentDestination]
+    @AppStorage("defaultOrigin") private var defaultOrigin: String = ""
 
     @State private var showingForm = false
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(destinations) { dest in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(dest.name)
-                            .font(.body)
-                        Text(dest.address)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                Section {
+                    if !defaultOrigin.isEmpty {
+                        HStack {
+                            Image(systemName: "pin.circle.fill")
+                                .foregroundStyle(.tint)
+                                .font(.title3)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Default Starting Place")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Text(defaultOrigin)
+                                    .font(.body)
+                            }
+                            Spacer()
+                            Button {
+                                defaultOrigin = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.secondary)
+                                    .font(.title3)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    } else {
+                        HStack {
+                            Image(systemName: "pin.slash")
+                                .foregroundStyle(.secondary)
+                            Text("No default starting place set")
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                } header: {
+                    Text("Default Starting Place")
+                } footer: {
+                    Text("Tap a destination below to set it as your default origin for new trips.")
                 }
-                .onDelete { indexSet in
-                    for index in indexSet {
-                        context.delete(destinations[index])
+
+                Section("Destinations") {
+                    ForEach(destinations) { dest in
+                        Button {
+                            defaultOrigin = dest.address
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(dest.name)
+                                        .font(.body)
+                                        .foregroundStyle(.primary)
+                                    Text(dest.address)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                if defaultOrigin == dest.address {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(.tint)
+                                }
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            if defaultOrigin == destinations[index].address {
+                                defaultOrigin = ""
+                            }
+                            context.delete(destinations[index])
+                        }
                     }
                 }
             }
