@@ -54,7 +54,8 @@ struct TripFormView: View {
                         destinations: destinations,
                         isActive: $showSuggestions,
                         field: $suggestionField,
-                        fieldId: "destination"
+                        fieldId: "destination",
+                        onSelectDestination: { selectedDestination = $0 }
                     )
 
                     Toggle("Round Trip", isOn: $isRoundTrip)
@@ -175,8 +176,13 @@ struct TripFormView: View {
             )
             context.insert(trip)
         }
-        try? context.save()
-        dismiss()
+        do {
+            try context.save()
+            dismiss()
+        } catch {
+            alertMessage = "Failed to save trip: \(error.localizedDescription)"
+            showingAlert = true
+        }
     }
 }
 
@@ -187,6 +193,7 @@ struct AutocompleteAddressField: View {
     @Binding var isActive: Bool
     @Binding var field: String?
     let fieldId: String
+    var onSelectDestination: ((FrequentDestination) -> Void)?
 
     @State private var searchService = AddressSearchService()
     @State private var didSelect = false
@@ -201,15 +208,20 @@ struct AutocompleteAddressField: View {
                         didSelect = false
                         return
                     }
-                    if !newValue.isEmpty {
+                    if isFocused && !newValue.isEmpty {
                         isActive = true
                         field = fieldId
                     }
-                    searchService.search(newValue)
+                    if isFocused {
+                        searchService.search(newValue)
+                    }
                 }
                 .onTapGesture {
                     isActive = true
                     field = fieldId
+                    if !text.isEmpty {
+                        searchService.search(text)
+                    }
                 }
                 .overlay(alignment: .trailing) {
                     if !text.isEmpty {
@@ -238,6 +250,7 @@ struct AutocompleteAddressField: View {
 
                     ForEach(matches) { dest in
                         Button(action: {
+                            onSelectDestination?(dest)
                             didSelect = true
                             isActive = false
                             field = nil
