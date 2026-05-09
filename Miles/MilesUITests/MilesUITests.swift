@@ -1,9 +1,6 @@
 //
 //  MilesUITests.swift
 //  MilesUITests
-//
-//  Created by Keith Walbolt on 5/9/26.
-//
 
 import XCTest
 

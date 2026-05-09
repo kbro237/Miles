@@ -1,9 +1,6 @@
 //
 //  MilesTests.swift
 //  MilesTests
-//
-//  Created by Keith Walbolt on 5/9/26.
-//
 
 import Testing
 @testable import Miles
