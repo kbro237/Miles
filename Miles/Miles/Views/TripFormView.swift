@@ -155,11 +155,16 @@ struct AutocompleteAddressField: View {
     let fieldId: String
 
     @State private var searchService = AddressSearchService()
+    @State private var didSelect = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextField(label, text: $text)
                 .onChange(of: text) { _, newValue in
+                    guard !didSelect else {
+                        didSelect = false
+                        return
+                    }
                     if !newValue.isEmpty {
                         isActive = true
                         field = fieldId
@@ -180,10 +185,11 @@ struct AutocompleteAddressField: View {
 
                     ForEach(matches) { dest in
                         Button(action: {
-                            text = dest.address
+                            didSelect = true
                             isActive = false
                             field = nil
                             searchService.results = []
+                            text = dest.address
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "star.fill")
@@ -209,10 +215,11 @@ struct AutocompleteAddressField: View {
 
                     ForEach(searchService.results, id: \.self) { completion in
                         Button(action: {
-                            text = "\(completion.title), \(completion.subtitle)"
+                            didSelect = true
                             isActive = false
                             field = nil
                             searchService.results = []
+                            text = "\(completion.title), \(completion.subtitle)"
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "mappin")

@@ -11,6 +11,7 @@ struct FrequentDestinationFormView: View {
     @State private var address: String = ""
     @State private var showingDuplicateAlert = false
     @State private var searchService = AddressSearchService()
+    @State private var didSelect = false
 
     var body: some View {
         NavigationStack {
@@ -21,6 +22,10 @@ struct FrequentDestinationFormView: View {
                     TextField("Address", text: $address, axis: .vertical)
                         .lineLimit(2...4)
                         .onChange(of: address) { _, newValue in
+                            guard !didSelect else {
+                                didSelect = false
+                                return
+                            }
                             searchService.search(newValue)
                         }
 
@@ -28,8 +33,9 @@ struct FrequentDestinationFormView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(searchService.results, id: \.self) { completion in
                                 Button(action: {
-                                    address = "\(completion.title), \(completion.subtitle)"
+                                    didSelect = true
                                     searchService.results = []
+                                    address = "\(completion.title), \(completion.subtitle)"
                                 }) {
                                     HStack(spacing: 8) {
                                         Image(systemName: "mappin")
