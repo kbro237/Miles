@@ -119,16 +119,27 @@ struct SettingsView: View {
     private func handleImportResult(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
-            guard let url = urls.first,
-                  let data = try? Data(contentsOf: url) else {
-                alertMessage = "Could not read the selected file."
+            guard let url = urls.first else {
+                alertMessage = "No file selected."
                 showingAlert = true
                 return
             }
-            pendingImportData = data
-            showingImportConfirm = true
-        case .failure:
-            alertMessage = "Could not open the selected file."
+            guard url.startAccessingSecurityScopedResource() else {
+                alertMessage = "Could not access the selected file."
+                showingAlert = true
+                return
+            }
+            defer { url.stopAccessingSecurityScopedResource() }
+            do {
+                let data = try Data(contentsOf: url)
+                pendingImportData = data
+                showingImportConfirm = true
+            } catch {
+                alertMessage = "Could not read the selected file: \(error.localizedDescription)"
+                showingAlert = true
+            }
+        case .failure(let error):
+            alertMessage = "Could not open file: \(error.localizedDescription)"
             showingAlert = true
         }
     }
