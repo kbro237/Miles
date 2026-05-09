@@ -6,7 +6,9 @@ struct TripDetailView: View {
     var body: some View {
         List {
             Section("Trip Details") {
-                LabeledContent("Date", value: trip.date, style: .date)
+                LabeledContent("Date") {
+                    Text(trip.date, style: .date)
+                }
                 LabeledContent("Purpose", value: trip.purpose)
                 if let notes = trip.notes, !notes.isEmpty {
                     LabeledContent("Notes", value: notes)

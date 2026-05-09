@@ -1,19 +1,21 @@
 import SwiftUI
-import PDFKit
 
 struct PDFExporter {
+    @MainActor
     static func export(quarter: Quarter, trips: [Trip]) -> Data? {
-        let summary = PDFSummaryView(quarter: quarter, trips: trips)
-        let hosting = UIHostingController(rootView: summary)
         let size = CGSize(width: 612, height: 792)
-        hosting.view.frame = CGRect(origin: .zero, size: size)
-        hosting.view.backgroundColor = .white
 
-        let renderer = UIGraphicsPDFRenderer(bounds: CGRect(origin: .zero, size: size))
+        let rendered = PDFSummaryView(quarter: quarter, trips: trips)
+            .frame(width: size.width, height: size.height)
+        let imageRenderer = ImageRenderer(content: rendered)
+        imageRenderer.scale = 2.0
 
-        return renderer.pdfData { ctx in
+        guard let image = imageRenderer.uiImage else { return nil }
+
+        let pdfRenderer = UIGraphicsPDFRenderer(bounds: CGRect(origin: .zero, size: size))
+        return pdfRenderer.pdfData { ctx in
             ctx.beginPage()
-            hosting.view.layer.render(in: ctx.cgContext)
+            image.draw(in: CGRect(origin: .zero, size: size))
         }
     }
 }
