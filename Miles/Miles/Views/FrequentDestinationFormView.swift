@@ -12,6 +12,7 @@ struct FrequentDestinationFormView: View {
     @State private var showingDuplicateAlert = false
     @State private var searchService = AddressSearchService()
     @State private var didSelect = false
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -21,6 +22,7 @@ struct FrequentDestinationFormView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     TextField("Address", text: $address, axis: .vertical)
                         .lineLimit(2...4)
+                        .focused($isFocused)
                         .onChange(of: address) { _, newValue in
                             guard !didSelect else {
                                 didSelect = false
@@ -35,6 +37,7 @@ struct FrequentDestinationFormView: View {
                                 Button(action: {
                                     didSelect = true
                                     searchService.results = []
+                                    isFocused = false
                                     address = "\(completion.title), \(completion.subtitle)"
                                 }) {
                                     HStack(spacing: 8) {

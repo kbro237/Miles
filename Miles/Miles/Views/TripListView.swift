@@ -6,6 +6,7 @@ struct TripListView: View {
     @Query(sort: \Trip.date, order: .reverse) private var trips: [Trip]
 
     @State private var showingForm = false
+    @State private var sheetID = UUID()
 
     var body: some View {
         NavigationStack {
@@ -24,13 +25,17 @@ struct TripListView: View {
             .navigationTitle("Trips")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(action: { showingForm = true }) {
+                    Button(action: {
+                        sheetID = UUID()
+                        showingForm = true
+                    }) {
                         Image(systemName: "plus")
                     }
                 }
             }
             .sheet(isPresented: $showingForm) {
                 TripFormView()
+                    .id(sheetID)
             }
         }
     }

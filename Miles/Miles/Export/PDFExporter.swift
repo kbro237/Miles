@@ -6,7 +6,6 @@ struct PDFExporter {
         let size = CGSize(width: 612, height: 792)
 
         let rendered = PDFSummaryView(quarter: quarter, trips: trips)
-            .frame(width: size.width, height: size.height)
         let imageRenderer = ImageRenderer(content: rendered)
         imageRenderer.scale = 2.0
 
@@ -25,58 +24,58 @@ struct PDFSummaryView: View {
     let trips: [Trip]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 4) {
             Text("Mileage Report — \(quarter.displayString)")
-                .font(.title)
-                .padding(.bottom, 8)
+                .font(.system(size: 16, weight: .bold))
+                .padding(.bottom, 4)
 
             let totalMiles = quarter.totalMiles(for: trips)
             let totalReimbursement = quarter.totalReimbursement(for: trips)
 
             HStack {
-                VStack(alignment: .leading) {
-                    Text("Total Miles:")
-                        .font(.headline)
-                    Text("\(String(format: "%.1f", totalMiles))")
-                }
+                Text("Total Miles: \(String(format: "%.1f", totalMiles))")
+                    .font(.system(size: 10))
                 Spacer()
-                VStack(alignment: .leading) {
-                    Text("Total Reimbursement:")
-                        .font(.headline)
-                    Text("$\(String(format: "%.2f", totalReimbursement))")
-                }
+                Text("Total Reimbursement: $\(String(format: "%.2f", totalReimbursement))")
+                    .font(.system(size: 10))
             }
-            .padding(.bottom, 8)
+            .padding(.bottom, 4)
 
             Divider()
 
             ForEach(trips.sorted(by: { $0.date < $1.date })) { trip in
-                HStack {
-                    Text(trip.date.formatted(date: .numeric, time: .omitted))
-                        .frame(width: 80, alignment: .leading)
-                        .font(.caption)
-                    Text(trip.originAddress)
-                        .font(.caption)
-                        .lineLimit(1)
-                    Text("→")
-                        .font(.caption)
-                    Text(trip.destinationAddress)
-                        .font(.caption)
-                        .lineLimit(1)
-                    Spacer()
-                    Text("\(trip.rateCentsPerMile)¢")
-                        .font(.caption)
-                        .frame(width: 40, alignment: .trailing)
-                    Text("\(String(format: "%.1f", trip.effectiveDistanceRounded)) mi")
-                        .font(.caption)
-                        .frame(width: 50, alignment: .trailing)
-                    Text("$\(String(format: "%.2f", trip.reimbursementTotal))")
-                        .font(.caption)
-                        .frame(width: 60, alignment: .trailing)
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(alignment: .top, spacing: 4) {
+                        Text(trip.date.formatted(date: .numeric, time: .omitted))
+                            .font(.system(size: 9))
+                            .frame(width: 72, alignment: .leading)
+
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("\(trip.originAddress)")
+                                .font(.system(size: 9))
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text("→ \(trip.destinationAddress)")
+                                .font(.system(size: 9))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        VStack(alignment: .trailing, spacing: 1) {
+                            Text("\(trip.rateCentsPerMile)¢")
+                                .font(.system(size: 9))
+                            Text(String(format: "%.1f mi", trip.effectiveDistanceRounded))
+                                .font(.system(size: 9))
+                            Text("$\(String(format: "%.2f", trip.reimbursementTotal))")
+                                .font(.system(size: 9, weight: .medium))
+                        }
+                        .frame(width: 60)
+                    }
+                    Divider()
                 }
-                Divider()
             }
         }
-        .padding(40)
+        .padding(24)
+        .frame(width: 612, height: 792, alignment: .topLeading)
     }
 }

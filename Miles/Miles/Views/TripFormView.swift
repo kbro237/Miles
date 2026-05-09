@@ -156,10 +156,12 @@ struct AutocompleteAddressField: View {
 
     @State private var searchService = AddressSearchService()
     @State private var didSelect = false
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextField(label, text: $text)
+                .focused($isFocused)
                 .onChange(of: text) { _, newValue in
                     guard !didSelect else {
                         didSelect = false
@@ -189,6 +191,7 @@ struct AutocompleteAddressField: View {
                             isActive = false
                             field = nil
                             searchService.results = []
+                            isFocused = false
                             text = dest.address
                         }) {
                             HStack(spacing: 8) {
@@ -219,6 +222,7 @@ struct AutocompleteAddressField: View {
                             isActive = false
                             field = nil
                             searchService.results = []
+                            isFocused = false
                             text = "\(completion.title), \(completion.subtitle)"
                         }) {
                             HStack(spacing: 8) {
