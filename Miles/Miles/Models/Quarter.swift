@@ -16,11 +16,13 @@ struct Quarter: Identifiable, Equatable {
     }
 
     var endDate: Date {
-        var components = DateComponents()
-        components.year = year
-        components.month = quarterNumber * 3
-        components.day = Calendar.current.range(of: .day, in: .month, for: Date())?.upperBound ?? 30
-        return Calendar.current.date(from: components) ?? .now
+        let calendar = Calendar.current
+        let month = quarterNumber * 3
+        guard let monthDate = calendar.date(from: DateComponents(year: year, month: month, day: 1)),
+              let lastDay = calendar.range(of: .day, in: .month, for: monthDate)?.count else {
+            return .now
+        }
+        return calendar.date(from: DateComponents(year: year, month: month, day: lastDay)) ?? .now
     }
 
     static func current() -> Quarter {
