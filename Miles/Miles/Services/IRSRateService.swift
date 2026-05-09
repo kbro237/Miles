@@ -2,8 +2,6 @@ import Foundation
 
 struct IRSRateService {
 
-    static let standardRateKey = "lastKnownIRSRateCents"
-
     static var currentYearDefaultRate: Int {
         let year = Calendar.current.component(.year, from: Date())
         return defaultRate(for: year)

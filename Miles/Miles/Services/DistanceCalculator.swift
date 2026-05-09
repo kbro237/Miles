@@ -14,6 +14,8 @@ enum DistanceCalculatorError: LocalizedError {
 
 struct DistanceCalculator {
 
+    private static let metersPerMile = 1609.34
+
     static func calculate(origin: String, destination: String) async throws -> Double {
         let request = MKDirections.Request()
         request.transportType = .automobile
@@ -31,7 +33,7 @@ struct DistanceCalculator {
             throw DistanceCalculatorError.noResults
         }
 
-        return route.distance / 1609.34
+        return route.distance / metersPerMile
     }
 
     private static func geocode(address: String) async throws -> MKPlacemark {
