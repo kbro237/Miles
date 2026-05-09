@@ -51,6 +51,11 @@ struct PDFSummaryView: View {
                             .frame(width: 72, alignment: .leading)
 
                         VStack(alignment: .leading, spacing: 1) {
+                            if !trip.purpose.isEmpty {
+                                Text(trip.purpose)
+                                    .font(.system(size: 9, weight: .medium))
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                             Text("\(trip.originAddress)")
                                 .font(.system(size: 9))
                                 .fixedSize(horizontal: false, vertical: true)

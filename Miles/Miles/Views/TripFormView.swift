@@ -6,6 +6,8 @@ struct TripFormView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
+    var editing: Trip?
+
     @State private var date: Date = .now
     @State private var purpose: String = ""
     @State private var originAddress: String = ""
@@ -23,6 +25,9 @@ struct TripFormView: View {
     @State private var alertMessage = ""
 
     @Query private var destinations: [FrequentDestination]
+    @AppStorage("defaultOrigin") private var defaultOrigin: String = ""
+
+    private var isEditing: Bool { editing != nil }
 
     var body: some View {
         NavigationStack {
@@ -84,7 +89,7 @@ struct TripFormView: View {
                         .lineLimit(3...6)
                 }
             }
-            .navigationTitle("New Trip")
+            .navigationTitle(isEditing ? "Edit Trip" : "New Trip")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -101,10 +106,25 @@ struct TripFormView: View {
                 Text(alertMessage)
             }
             .onAppear {
-                rateCents = IRSRateService.currentYearDefaultRate
-                Task {
-                    let fetched = await IRSRateService.fetchCurrentRate()
-                    rateCents = fetched
+                if let trip = editing {
+                    date = trip.date
+                    purpose = trip.purpose
+                    originAddress = trip.originAddress
+                    destinationAddress = trip.destinationAddress
+                    isRoundTrip = trip.isRoundTrip
+                    distanceMiles = String(format: "%.1f", trip.distanceMiles)
+                    rateCents = trip.rateCentsPerMile
+                    notes = trip.notes ?? ""
+                    selectedDestination = trip.destination
+                } else {
+                    rateCents = IRSRateService.currentYearDefaultRate
+                    Task {
+                        let fetched = await IRSRateService.fetchCurrentRate()
+                        rateCents = fetched
+                    }
+                    if !defaultOrigin.isEmpty && originAddress.isEmpty {
+                        originAddress = defaultOrigin
+                    }
                 }
             }
         }
@@ -130,18 +150,32 @@ struct TripFormView: View {
 
     private func saveTrip() {
         guard let miles = Double(distanceMiles) else { return }
-        let trip = Trip(
-            date: date,
-            purpose: purpose,
-            distanceMiles: miles,
-            isRoundTrip: isRoundTrip,
-            rateCentsPerMile: rateCents,
-            originAddress: originAddress,
-            destinationAddress: destinationAddress,
-            notes: notes.isEmpty ? nil : notes,
-            destination: selectedDestination
-        )
-        context.insert(trip)
+
+        if let trip = editing {
+            trip.date = date
+            trip.purpose = purpose
+            trip.distanceMiles = miles
+            trip.isRoundTrip = isRoundTrip
+            trip.rateCentsPerMile = rateCents
+            trip.originAddress = originAddress
+            trip.destinationAddress = destinationAddress
+            trip.notes = notes.isEmpty ? nil : notes
+            trip.destination = selectedDestination
+        } else {
+            let trip = Trip(
+                date: date,
+                purpose: purpose,
+                distanceMiles: miles,
+                isRoundTrip: isRoundTrip,
+                rateCentsPerMile: rateCents,
+                originAddress: originAddress,
+                destinationAddress: destinationAddress,
+                notes: notes.isEmpty ? nil : notes,
+                destination: selectedDestination
+            )
+            context.insert(trip)
+        }
+        try? context.save()
         dismiss()
     }
 }
@@ -176,6 +210,23 @@ struct AutocompleteAddressField: View {
                 .onTapGesture {
                     isActive = true
                     field = fieldId
+                }
+                .overlay(alignment: .trailing) {
+                    if !text.isEmpty {
+                        Button {
+                            didSelect = true
+                            isActive = false
+                            field = nil
+                            searchService.results = []
+                            text = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.trailing, 2)
+                    }
                 }
 
             if isActive && field == fieldId && !text.isEmpty {

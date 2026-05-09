@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TripDetailView: View {
     let trip: Trip
+    @State private var showingEdit = false
 
     var body: some View {
         List {
@@ -36,5 +37,13 @@ struct TripDetailView: View {
             }
         }
         .navigationTitle("Trip Details")
+        .toolbar {
+            Button("Edit") {
+                showingEdit = true
+            }
+        }
+        .sheet(isPresented: $showingEdit) {
+            TripFormView(editing: trip)
+        }
     }
 }
