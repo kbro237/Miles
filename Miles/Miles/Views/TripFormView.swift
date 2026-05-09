@@ -92,7 +92,7 @@ struct TripFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveTrip() }
-                        .disabled(purpose.isEmpty || distanceMiles.isEmpty || Double(distanceMiles) == nil)
+                        .disabled(purpose.isEmpty || !isValidDistance)
                 }
             }
             .alert("", isPresented: $showingAlert) {
@@ -108,6 +108,11 @@ struct TripFormView: View {
                 }
             }
         }
+    }
+
+    private var isValidDistance: Bool {
+        guard let value = Double(distanceMiles) else { return false }
+        return value > 0
     }
 
     private func calculateDistance() async {

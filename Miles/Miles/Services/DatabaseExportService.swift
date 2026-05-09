@@ -98,6 +98,7 @@ struct DatabaseExportService {
             context.insert(newTrip)
         }
 
+        try context.save()
         UserDefaults.standard.set(export.paidQuarters, forKey: "paidQuarters")
     }
 }
