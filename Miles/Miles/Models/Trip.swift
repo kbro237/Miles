@@ -35,12 +35,6 @@ final class Trip {
         self.destination = destination
     }
 
-    var reimbursementDollars: Double {
-        let miles = distanceMiles.roundedTo1dp
-        let rate = Double(rateCentsPerMile) / 100.0
-        return (miles * rate).roundedTo2dp
-    }
-
     var effectiveDistance: Double {
         isRoundTrip ? distanceMiles * 2 : distanceMiles
     }
