@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import MapKit
 
 struct TripFormView: View {
     @Environment(\.modelContext) private var context
@@ -148,14 +149,17 @@ struct AutocompleteAddressField: View {
     @Binding var field: String?
     let fieldId: String
 
+    @State private var searchService = AddressSearchService()
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 0) {
             TextField(label, text: $text)
                 .onChange(of: text) { _, newValue in
                     if !newValue.isEmpty {
                         isActive = true
                         field = fieldId
                     }
+                    searchService.search(newValue)
                 }
                 .onTapGesture {
                     isActive = true
@@ -163,16 +167,18 @@ struct AutocompleteAddressField: View {
                 }
 
             if isActive && field == fieldId && !text.isEmpty {
-                let matches = destinations.filter {
-                    $0.name.localizedCaseInsensitiveContains(text) ||
-                    $0.address.localizedCaseInsensitiveContains(text)
-                }
-                if !matches.isEmpty {
+                VStack(alignment: .leading, spacing: 0) {
+                    let matches = destinations.filter {
+                        $0.name.localizedCaseInsensitiveContains(text) ||
+                        $0.address.localizedCaseInsensitiveContains(text)
+                    }
+
                     ForEach(matches) { dest in
                         Button(action: {
                             text = dest.address
                             isActive = false
                             field = nil
+                            searchService.results = []
                         }) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(dest.name)
@@ -182,10 +188,41 @@ struct AutocompleteAddressField: View {
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
                         }
                         .buttonStyle(.plain)
+                        Divider()
+                    }
+
+                    ForEach(searchService.results, id: \.self) { completion in
+                        Button(action: {
+                            text = "\(completion.title), \(completion.subtitle)"
+                            isActive = false
+                            field = nil
+                            searchService.results = []
+                        }) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(completion.title)
+                                    .font(.body)
+                                    .foregroundStyle(.primary)
+                                Text(completion.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                        }
+                        .buttonStyle(.plain)
+                        Divider()
                     }
                 }
+                .background(Color(.systemBackground))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(.separator), lineWidth: 0.5)
+                )
+                .cornerRadius(8)
             }
         }
     }
