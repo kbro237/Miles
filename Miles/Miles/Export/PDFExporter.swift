@@ -59,7 +59,7 @@ struct PDFSummaryView: View {
                             Text("\(trip.originAddress)")
                                 .font(.system(size: 9))
                                 .fixedSize(horizontal: false, vertical: true)
-                            Text("→ \(trip.destinationAddress)")
+                            Text("\(trip.isRoundTrip ? "↔" : "→") \(trip.destinationAddress)")
                                 .font(.system(size: 9))
                                 .fixedSize(horizontal: false, vertical: true)
                         }
