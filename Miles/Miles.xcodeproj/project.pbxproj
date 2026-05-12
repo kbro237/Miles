@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
+		531BB28A2FB3A645005A42E5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53E22DF22FAF55C400A039A2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 531BB27A2FB3A643005A42E5;
+			remoteInfo = "Miles macOS";
+		};
+		531BB2942FB3A645005A42E5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53E22DF22FAF55C400A039A2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 531BB27A2FB3A643005A42E5;
+			remoteInfo = "Miles macOS";
+		};
 		53E22E0A2FAF55C800A039A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53E22DF22FAF55C400A039A2 /* Project object */;
@@ -24,14 +38,55 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		531BB27B2FB3A643005A42E5 /* Miles macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Miles macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		531BB2892FB3A645005A42E5 /* Miles macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Miles macOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		531BB2932FB3A645005A42E5 /* Miles macOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Miles macOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53E22DFA2FAF55C400A039A2 /* Miles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Miles.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53E22E092FAF55C800A039A2 /* MilesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MilesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		53E22E132FAF55C800A039A2 /* MilesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MilesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		531BB2B92FB3BC93005A42E5 /* Exceptions for "Miles" folder in "Miles macOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ContentView.swift,
+				Export/CSVExporter.swift,
+				Export/MarkdownExporter.swift,
+				Export/PDFExporter.swift,
+				"Extensions/Double+Extensions.swift",
+				MilesApp.swift,
+				Models/FrequentDestination.swift,
+				Models/Quarter.swift,
+				Models/Trip.swift,
+				Services/AddressSearchService.swift,
+				Services/DatabaseExportService.swift,
+				Services/DistanceCalculator.swift,
+				Services/IRSRateService.swift,
+				Views/FrequentDestinationFormView.swift,
+				Views/FrequentDestinationListView.swift,
+				Views/QuarterDetailView.swift,
+				Views/QuarterListView.swift,
+				Views/SettingsView.swift,
+				Views/TripDetailView.swift,
+				Views/TripFormView.swift,
+				Views/TripListView.swift,
+			);
+			target = 531BB27A2FB3A643005A42E5 /* Miles macOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		531BB27C2FB3A643005A42E5 /* Miles macOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Miles macOS";
+			sourceTree = "<group>";
+		};
 		53E22DFC2FAF55C400A039A2 /* Miles */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				531BB2B92FB3BC93005A42E5 /* Exceptions for "Miles" folder in "Miles macOS" target */,
+			);
 			path = Miles;
 			sourceTree = "<group>";
 		};
@@ -48,6 +103,27 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		531BB2782FB3A643005A42E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531BB2862FB3A645005A42E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531BB2902FB3A645005A42E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53E22DF72FAF55C400A039A2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -78,6 +154,7 @@
 				53E22DFC2FAF55C400A039A2 /* Miles */,
 				53E22E0C2FAF55C800A039A2 /* MilesTests */,
 				53E22E162FAF55C800A039A2 /* MilesUITests */,
+				531BB27C2FB3A643005A42E5 /* Miles macOS */,
 				53E22DFB2FAF55C400A039A2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +165,9 @@
 				53E22DFA2FAF55C400A039A2 /* Miles.app */,
 				53E22E092FAF55C800A039A2 /* MilesTests.xctest */,
 				53E22E132FAF55C800A039A2 /* MilesUITests.xctest */,
+				531BB27B2FB3A643005A42E5 /* Miles macOS.app */,
+				531BB2892FB3A645005A42E5 /* Miles macOSTests.xctest */,
+				531BB2932FB3A645005A42E5 /* Miles macOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,6 +175,68 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		531BB27A2FB3A643005A42E5 /* Miles macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 531BB2A12FB3A645005A42E5 /* Build configuration list for PBXNativeTarget "Miles macOS" */;
+			buildPhases = (
+				531BB2772FB3A643005A42E5 /* Sources */,
+				531BB2782FB3A643005A42E5 /* Frameworks */,
+				531BB2792FB3A643005A42E5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				531BB27C2FB3A643005A42E5 /* Miles macOS */,
+			);
+			name = "Miles macOS";
+			packageProductDependencies = (
+			);
+			productName = "Miles macOS";
+			productReference = 531BB27B2FB3A643005A42E5 /* Miles macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		531BB2882FB3A645005A42E5 /* Miles macOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 531BB2A22FB3A645005A42E5 /* Build configuration list for PBXNativeTarget "Miles macOSTests" */;
+			buildPhases = (
+				531BB2852FB3A645005A42E5 /* Sources */,
+				531BB2862FB3A645005A42E5 /* Frameworks */,
+				531BB2872FB3A645005A42E5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				531BB28B2FB3A645005A42E5 /* PBXTargetDependency */,
+			);
+			name = "Miles macOSTests";
+			packageProductDependencies = (
+			);
+			productName = "Miles macOSTests";
+			productReference = 531BB2892FB3A645005A42E5 /* Miles macOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		531BB2922FB3A645005A42E5 /* Miles macOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 531BB2A32FB3A645005A42E5 /* Build configuration list for PBXNativeTarget "Miles macOSUITests" */;
+			buildPhases = (
+				531BB28F2FB3A645005A42E5 /* Sources */,
+				531BB2902FB3A645005A42E5 /* Frameworks */,
+				531BB2912FB3A645005A42E5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				531BB2952FB3A645005A42E5 /* PBXTargetDependency */,
+			);
+			name = "Miles macOSUITests";
+			packageProductDependencies = (
+			);
+			productName = "Miles macOSUITests";
+			productReference = 531BB2932FB3A645005A42E5 /* Miles macOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		53E22DF92FAF55C400A039A2 /* Miles */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 53E22E1D2FAF55C800A039A2 /* Build configuration list for PBXNativeTarget "Miles" */;
@@ -173,6 +315,17 @@
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					531BB27A2FB3A643005A42E5 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					531BB2882FB3A645005A42E5 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 531BB27A2FB3A643005A42E5;
+					};
+					531BB2922FB3A645005A42E5 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 531BB27A2FB3A643005A42E5;
+					};
 					53E22DF92FAF55C400A039A2 = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
@@ -203,11 +356,35 @@
 				53E22DF92FAF55C400A039A2 /* Miles */,
 				53E22E082FAF55C800A039A2 /* MilesTests */,
 				53E22E122FAF55C800A039A2 /* MilesUITests */,
+				531BB27A2FB3A643005A42E5 /* Miles macOS */,
+				531BB2882FB3A645005A42E5 /* Miles macOSTests */,
+				531BB2922FB3A645005A42E5 /* Miles macOSUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		531BB2792FB3A643005A42E5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531BB2872FB3A645005A42E5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531BB2912FB3A645005A42E5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53E22DF82FAF55C400A039A2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -232,6 +409,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		531BB2772FB3A643005A42E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531BB2852FB3A645005A42E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531BB28F2FB3A645005A42E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53E22DF62FAF55C400A039A2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -256,6 +454,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		531BB28B2FB3A645005A42E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 531BB27A2FB3A643005A42E5 /* Miles macOS */;
+			targetProxy = 531BB28A2FB3A645005A42E5 /* PBXContainerItemProxy */;
+		};
+		531BB2952FB3A645005A42E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 531BB27A2FB3A643005A42E5 /* Miles macOS */;
+			targetProxy = 531BB2942FB3A645005A42E5 /* PBXContainerItemProxy */;
+		};
 		53E22E0B2FAF55C800A039A2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 53E22DF92FAF55C400A039A2 /* Miles */;
@@ -269,6 +477,152 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		531BB29B2FB3A645005A42E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miles.tracker.Miles-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		531BB29C2FB3A645005A42E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miles.tracker.Miles-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		531BB29D2FB3A645005A42E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miles.tracker.Miles-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Miles macOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Miles macOS";
+			};
+			name = Debug;
+		};
+		531BB29E2FB3A645005A42E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miles.tracker.Miles-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Miles macOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Miles macOS";
+			};
+			name = Release;
+		};
+		531BB29F2FB3A645005A42E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miles.tracker.Miles-macOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Miles macOS";
+			};
+			name = Debug;
+		};
+		531BB2A02FB3A645005A42E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miles.tracker.Miles-macOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Miles macOS";
+			};
+			name = Release;
+		};
 		53E22E1B2FAF55C800A039A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -541,6 +895,33 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		531BB2A12FB3A645005A42E5 /* Build configuration list for PBXNativeTarget "Miles macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				531BB29B2FB3A645005A42E5 /* Debug */,
+				531BB29C2FB3A645005A42E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		531BB2A22FB3A645005A42E5 /* Build configuration list for PBXNativeTarget "Miles macOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				531BB29D2FB3A645005A42E5 /* Debug */,
+				531BB29E2FB3A645005A42E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		531BB2A32FB3A645005A42E5 /* Build configuration list for PBXNativeTarget "Miles macOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				531BB29F2FB3A645005A42E5 /* Debug */,
+				531BB2A02FB3A645005A42E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		53E22DF52FAF55C400A039A2 /* Build configuration list for PBXProject "Miles" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -1,4 +1,7 @@
 import SwiftUI
+#if os(macOS)
+import PDFKit
+#endif
 
 struct PDFExporter {
     @MainActor
@@ -6,16 +9,25 @@ struct PDFExporter {
         let size = CGSize(width: 612, height: 792)
 
         let rendered = PDFSummaryView(quarter: quarter, trips: trips)
+            .frame(width: size.width, height: size.height)
         let imageRenderer = ImageRenderer(content: rendered)
         imageRenderer.scale = 2.0
 
+#if os(macOS)
+        guard let image = imageRenderer.nsImage else { return nil }
+        let page = PDFPage(image: image)
+        guard let pdfPage = page else { return nil }
+        let doc = PDFDocument()
+        doc.insert(pdfPage, at: 0)
+        return doc.dataRepresentation()
+#else
         guard let image = imageRenderer.uiImage else { return nil }
-
         let pdfRenderer = UIGraphicsPDFRenderer(bounds: CGRect(origin: .zero, size: size))
         return pdfRenderer.pdfData { ctx in
             ctx.beginPage()
             image.draw(in: CGRect(origin: .zero, size: size))
         }
+#endif
     }
 }
 

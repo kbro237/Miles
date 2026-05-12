@@ -62,7 +62,9 @@ struct TripFormView: View {
 
                     HStack {
                         TextField("Distance (miles)", text: $distanceMiles)
+#if os(iOS)
                             .keyboardType(.decimalPad)
+#endif
 
                         if isCalculating {
                             ProgressView()
@@ -91,7 +93,9 @@ struct TripFormView: View {
                 }
             }
             .navigationTitle(isEditing ? "Edit Trip" : "New Trip")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -311,11 +315,19 @@ struct AutocompleteAddressField: View {
                         Divider()
                     }
                 }
+#if os(iOS)
                 .background(Color(.systemBackground))
+#else
+                .background(Color(nsColor: .windowBackgroundColor))
+#endif
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
+#if os(iOS)
                         .stroke(Color(.separator), lineWidth: 1)
+#else
+                        .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
+#endif
                 )
                 .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
                 .padding(.top, 4)
