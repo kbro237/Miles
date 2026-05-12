@@ -18,5 +18,15 @@ struct MilesApp: App {
             ContentView()
         }
         .modelContainer(container)
+#if os(macOS)
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                Button("New Trip") {
+                    NotificationCenter.default.post(name: .init("newTrip"), object: nil)
+                }
+                .keyboardShortcut("n")
+            }
+        }
+#endif
     }
 }

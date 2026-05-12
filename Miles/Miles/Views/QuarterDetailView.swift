@@ -33,34 +33,36 @@ struct QuarterDetailView: View {
         .navigationTitle(quarter.displayString)
     }
 
-    private func shareCSV() {
-        let csv = CSVExporter.export(quarter: quarter, trips: trips)
-        share(text: csv, filename: "\(quarter.id)-mileage.csv")
-    }
-
-    private func shareMarkdown() {
-        let md = MarkdownExporter.export(quarter: quarter, trips: trips)
-        share(text: md, filename: "\(quarter.id)-mileage.md")
-    }
-
     private func sharePDF() {
         guard let data = PDFExporter.export(quarter: quarter, trips: trips) else { return }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(quarter.id)-mileage.pdf")
         try? data.write(to: url)
-        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        present(av)
+        share(url: url)
     }
 
-    private func share(text: String, filename: String) {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-        try? text.write(to: url, atomically: true, encoding: .utf8)
-        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        present(av)
+    private func shareCSV() {
+        let csv = CSVExporter.export(quarter: quarter, trips: trips)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(quarter.id)-mileage.csv")
+        try? csv.write(to: url, atomically: true, encoding: .utf8)
+        share(url: url)
     }
 
-    private func present(_ av: UIActivityViewController) {
+    private func shareMarkdown() {
+        let md = MarkdownExporter.export(quarter: quarter, trips: trips)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(quarter.id)-mileage.md")
+        try? md.write(to: url, atomically: true, encoding: .utf8)
+        share(url: url)
+    }
+
+    private func share(url: URL) {
+#if os(macOS)
+        NSSharingServicePicker(items: [url])
+            .show(relativeTo: .zero, of: NSApp.keyWindow?.contentView ?? NSView(), preferredEdge: .minY)
+#else
+        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let root = scene.windows.first?.rootViewController else { return }
         root.present(av, animated: true)
+#endif
     }
 }

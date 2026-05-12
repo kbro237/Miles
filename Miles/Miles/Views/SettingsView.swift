@@ -110,10 +110,15 @@ struct SettingsView: View {
         }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("Miles-backup.json")
         try? data.write(to: url)
+#if os(macOS)
+        NSSharingServicePicker(items: [url])
+            .show(relativeTo: .zero, of: NSApp.keyWindow?.contentView ?? NSView(), preferredEdge: .minY)
+#else
         let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let root = scene.windows.first?.rootViewController else { return }
         root.present(av, animated: true)
+#endif
     }
 
     private func handleImportResult(_ result: Result<[URL], Error>) {

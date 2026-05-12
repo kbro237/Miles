@@ -31,11 +31,18 @@ struct TripListView: View {
                     }) {
                         Image(systemName: "plus")
                     }
+#if os(macOS)
+                    .keyboardShortcut("n", modifiers: .command)
+#endif
                 }
             }
             .sheet(isPresented: $showingForm) {
                 TripFormView()
                     .id(sheetID)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .init("newTrip"))) { _ in
+                sheetID = UUID()
+                showingForm = true
             }
         }
     }
