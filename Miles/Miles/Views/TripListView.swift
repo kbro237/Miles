@@ -9,6 +9,40 @@ struct TripListView: View {
     @State private var sheetID = UUID()
 
     var body: some View {
+#if os(macOS)
+        List {
+            ForEach(trips) { trip in
+                NavigationLink(destination: TripDetailView(trip: trip)) {
+                    TripRowView(trip: trip)
+                }
+            }
+            .onDelete { indexSet in
+                for index in indexSet {
+                    context.delete(trips[index])
+                }
+            }
+        }
+        .navigationTitle("Trips")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: {
+                    sheetID = UUID()
+                    showingForm = true
+                }) {
+                    Image(systemName: "plus")
+                }
+                .keyboardShortcut("n", modifiers: .command)
+            }
+        }
+        .sheet(isPresented: $showingForm) {
+            TripFormView()
+                .id(sheetID)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .init("newTrip"))) { _ in
+            sheetID = UUID()
+            showingForm = true
+        }
+#else
         NavigationStack {
             List {
                 ForEach(trips) { trip in
@@ -31,9 +65,6 @@ struct TripListView: View {
                     }) {
                         Image(systemName: "plus")
                     }
-#if os(macOS)
-                    .keyboardShortcut("n", modifiers: .command)
-#endif
                 }
             }
             .sheet(isPresented: $showingForm) {
@@ -45,6 +76,7 @@ struct TripListView: View {
                 showingForm = true
             }
         }
+#endif
     }
 }
 

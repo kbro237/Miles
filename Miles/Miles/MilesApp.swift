@@ -24,6 +24,8 @@ struct MilesApp: App {
         }
         .modelContainer(container)
 #if os(macOS)
+        .defaultSize(width: 900, height: 600)
+        .windowResizability(.contentMinSize)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Trip") {

@@ -18,9 +18,77 @@ struct SettingsView: View {
     @State private var showingAlert = false
 
     var body: some View {
+#if os(macOS)
+        Form {
+            content
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Settings")
+        .sheet(isPresented: $showingDestinations) {
+            FrequentDestinationListView()
+        }
+        .fileImporter(
+            isPresented: $showingImporter,
+            allowedContentTypes: [.json],
+            allowsMultipleSelection: false
+        ) { result in
+            handleImportResult(result)
+        }
+        .alert("Import Database", isPresented: $showingImportConfirm) {
+            Button("Cancel", role: .cancel) {}
+            Button("Import", role: .destructive) {
+                performImport()
+            }
+        } message: {
+            Text("This will replace all existing trips and destinations with the imported data.")
+        }
+        .alert("Database", isPresented: $showingAlert) {
+            Button("OK") {}
+        } message: {
+            Text(alertMessage)
+        }
+        .onAppear {
+            Task { await checkRate() }
+        }
+#else
         NavigationStack {
             Form {
-                Section("IRS Mileage Rate") {
+                content
+            }
+            .navigationTitle("Settings")
+            .sheet(isPresented: $showingDestinations) {
+                FrequentDestinationListView()
+            }
+            .fileImporter(
+                isPresented: $showingImporter,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false
+            ) { result in
+                handleImportResult(result)
+            }
+            .alert("Import Database", isPresented: $showingImportConfirm) {
+                Button("Cancel", role: .cancel) {}
+                Button("Import", role: .destructive) {
+                    performImport()
+                }
+            } message: {
+                Text("This will replace all existing trips and destinations with the imported data.")
+            }
+            .alert("Database", isPresented: $showingAlert) {
+                Button("OK") {}
+            } message: {
+                Text(alertMessage)
+            }
+            .onAppear {
+                Task { await checkRate() }
+            }
+        }
+#endif
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        Section("IRS Mileage Rate") {
                     HStack {
                         Text("Current Rate")
                         Spacer()
@@ -65,35 +133,6 @@ struct SettingsView: View {
                     LabeledContent("Trips", value: "\(trips.count)")
                     LabeledContent("Destinations", value: "\(destinations.count)")
                 }
-            }
-            .navigationTitle("Settings")
-            .sheet(isPresented: $showingDestinations) {
-                FrequentDestinationListView()
-            }
-            .fileImporter(
-                isPresented: $showingImporter,
-                allowedContentTypes: [.json],
-                allowsMultipleSelection: false
-            ) { result in
-                handleImportResult(result)
-            }
-            .alert("Import Database", isPresented: $showingImportConfirm) {
-                Button("Cancel", role: .cancel) {}
-                Button("Import", role: .destructive) {
-                    performImport()
-                }
-            } message: {
-                Text("This will replace all existing trips and destinations with the imported data.")
-            }
-            .alert("Database", isPresented: $showingAlert) {
-                Button("OK") {}
-            } message: {
-                Text(alertMessage)
-            }
-            .onAppear {
-                Task { await checkRate() }
-            }
-        }
     }
 
     private func checkRate() async {

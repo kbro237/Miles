@@ -15,9 +15,67 @@ struct FrequentDestinationFormView: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
+#if os(macOS)
+        Form {
+            content
+        }
+        .navigationTitle("New Destination")
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") { dismiss() }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") {
+                    saveDestination()
+                }
+                .disabled(name.isEmpty || address.isEmpty)
+            }
+        }
+        .alert("Duplicate Name", isPresented: $showingDuplicateAlert) {
+            Button("OK") {}
+        } message: {
+            Text("A destination named \"\(name)\" already exists.")
+        }
+#else
         NavigationStack {
             Form {
-                TextField("Name", text: $name)
+                content
+            }
+            .navigationTitle("New Destination")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        saveDestination()
+                    }
+                    .disabled(name.isEmpty || address.isEmpty)
+                }
+            }
+            .alert("Duplicate Name", isPresented: $showingDuplicateAlert) {
+                Button("OK") {}
+            } message: {
+                Text("A destination named \"\(name)\" already exists.")
+            }
+        }
+#endif
+    }
+
+    private func saveDestination() {
+        if destinations.contains(where: { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }) {
+            showingDuplicateAlert = true
+            return
+        }
+        let dest = FrequentDestination(name: name, address: address)
+        context.insert(dest)
+        dismiss()
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        TextField("Name", text: $name)
 
                 VStack(alignment: .leading, spacing: 0) {
                     TextField("Address", text: $address, axis: .vertical)
@@ -81,32 +139,4 @@ struct FrequentDestinationFormView: View {
                     }
                 }
             }
-            .navigationTitle("New Destination")
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        if destinations.contains(where: { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }) {
-                            showingDuplicateAlert = true
-                            return
-                        }
-                        let dest = FrequentDestination(name: name, address: address)
-                        context.insert(dest)
-                        dismiss()
-                    }
-                    .disabled(name.isEmpty || address.isEmpty)
-                }
-            }
-            .alert("Duplicate Name", isPresented: $showingDuplicateAlert) {
-                Button("OK") {}
-            } message: {
-                Text("A destination named \"\(name)\" already exists.")
-            }
-        }
     }
-}

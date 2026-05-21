@@ -11,6 +11,35 @@ struct QuarterListView: View {
     }
 
     var body: some View {
+#if os(macOS)
+        List {
+            ForEach(quarters) { quarter in
+                NavigationLink(destination: QuarterDetailView(
+                    quarter: quarter,
+                    trips: quarter.trips(from: trips),
+                    isPaid: Binding(
+                        get: { isQuarterPaid(quarter.id) },
+                        set: { newValue in
+                            if newValue {
+                                let pq = PaidQuarter(quarterID: quarter.id)
+                                context.insert(pq)
+                            } else if let existing = paidQuarters.first(where: { $0.quarterID == quarter.id }) {
+                                context.delete(existing)
+                            }
+                            try? context.save()
+                        }
+                    )
+                )) {
+                    QuarterRowView(
+                        quarter: quarter,
+                        trips: quarter.trips(from: trips),
+                        isPaid: isQuarterPaid(quarter.id)
+                    )
+                }
+            }
+        }
+        .navigationTitle("Quarters")
+#else
         NavigationStack {
             List {
                 ForEach(quarters) { quarter in
@@ -40,6 +69,7 @@ struct QuarterListView: View {
             }
             .navigationTitle("Quarters")
         }
+#endif
     }
 
     private func isQuarterPaid(_ quarterID: String) -> Bool {

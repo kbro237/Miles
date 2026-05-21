@@ -10,9 +10,50 @@ struct FrequentDestinationListView: View {
     @State private var showingForm = false
 
     var body: some View {
+#if os(macOS)
+        List {
+            content
+        }
+        .navigationTitle("Destinations")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: { showingForm = true }) {
+                    Image(systemName: "plus")
+                }
+            }
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Done") { dismiss() }
+            }
+        }
+        .sheet(isPresented: $showingForm) {
+            FrequentDestinationFormView()
+        }
+#else
         NavigationStack {
             List {
-                Section {
+                content
+            }
+            .navigationTitle("Destinations")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: { showingForm = true }) {
+                        Image(systemName: "plus")
+                    }
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .sheet(isPresented: $showingForm) {
+                FrequentDestinationFormView()
+            }
+        }
+#endif
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        Section {
                     if !defaultOrigin.isEmpty {
                         HStack {
                             Image(systemName: "pin.circle.fill")
@@ -83,20 +124,4 @@ struct FrequentDestinationListView: View {
                     }
                 }
             }
-            .navigationTitle("Destinations")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: { showingForm = true }) {
-                        Image(systemName: "plus")
-                    }
-                }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
-            .sheet(isPresented: $showingForm) {
-                FrequentDestinationFormView()
-            }
-        }
     }
-}

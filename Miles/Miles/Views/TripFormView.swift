@@ -30,10 +30,60 @@ struct TripFormView: View {
     private var isEditing: Bool { editing != nil }
 
     var body: some View {
+#if os(macOS)
+        Form {
+            content
+        }
+        .navigationTitle(isEditing ? "Edit Trip" : "New Trip")
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") { dismiss() }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") { saveTrip() }
+                    .disabled(purpose.isEmpty || !isValidDistance)
+            }
+        }
+        .alert("", isPresented: $showingAlert) {
+            Button("OK") {}
+        } message: {
+            Text(alertMessage)
+        }
+        .onAppear {
+            populateFields()
+        }
+#else
         NavigationStack {
             Form {
-                Section("Trip Details") {
-                    DatePicker("Date", selection: $date, displayedComponents: .date)
+                content
+            }
+            .navigationTitle(isEditing ? "Edit Trip" : "New Trip")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { saveTrip() }
+                        .disabled(purpose.isEmpty || !isValidDistance)
+                }
+            }
+            .alert("", isPresented: $showingAlert) {
+                Button("OK") {}
+            } message: {
+                Text(alertMessage)
+            }
+            .onAppear {
+                populateFields()
+            }
+        }
+#endif
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        Section("Trip Details") {
+            DatePicker("Date", selection: $date, displayedComponents: .date)
 
                     TextField("Purpose", text: $purpose)
                 }
@@ -92,45 +142,26 @@ struct TripFormView: View {
                         .lineLimit(3...6)
                 }
             }
-            .navigationTitle(isEditing ? "Edit Trip" : "New Trip")
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { saveTrip() }
-                        .disabled(purpose.isEmpty || !isValidDistance)
-                }
+
+    private func populateFields() {
+        if let trip = editing {
+            date = trip.date
+            purpose = trip.purpose
+            originAddress = trip.originAddress
+            destinationAddress = trip.destinationAddress
+            isRoundTrip = trip.isRoundTrip
+            distanceMiles = String(format: "%.1f", trip.distanceMiles)
+            rateCents = trip.rateCentsPerMile
+            notes = trip.notes ?? ""
+            selectedDestination = trip.destination
+        } else {
+            rateCents = IRSRateService.currentYearDefaultRate
+            Task {
+                let fetched = await IRSRateService.fetchCurrentRate()
+                rateCents = fetched
             }
-            .alert("", isPresented: $showingAlert) {
-                Button("OK") {}
-            } message: {
-                Text(alertMessage)
-            }
-            .onAppear {
-                if let trip = editing {
-                    date = trip.date
-                    purpose = trip.purpose
-                    originAddress = trip.originAddress
-                    destinationAddress = trip.destinationAddress
-                    isRoundTrip = trip.isRoundTrip
-                    distanceMiles = String(format: "%.1f", trip.distanceMiles)
-                    rateCents = trip.rateCentsPerMile
-                    notes = trip.notes ?? ""
-                    selectedDestination = trip.destination
-                } else {
-                    rateCents = IRSRateService.currentYearDefaultRate
-                    Task {
-                        let fetched = await IRSRateService.fetchCurrentRate()
-                        rateCents = fetched
-                    }
-                    if !defaultOrigin.isEmpty && originAddress.isEmpty {
-                        originAddress = defaultOrigin
-                    }
-                }
+            if !defaultOrigin.isEmpty && originAddress.isEmpty {
+                originAddress = defaultOrigin
             }
         }
     }

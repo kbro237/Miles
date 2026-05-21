@@ -13,7 +13,6 @@ struct ContentView: View {
                 Label("Settings", systemImage: "gear").tag("settings")
             }
             .listStyle(.sidebar)
-            .frame(minWidth: 180)
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
         } detail: {
             switch selectedSection {
