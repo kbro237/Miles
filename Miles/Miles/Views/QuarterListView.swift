@@ -2,9 +2,9 @@ import SwiftUI
 import SwiftData
 
 struct QuarterListView: View {
+    @Environment(\.modelContext) private var context
     @Query(sort: \Trip.date, order: .reverse) private var trips: [Trip]
-    @State private var paidQuarters: Set<String> = UserDefaults.standard.stringArray(forKey: "paidQuarters")
-        .map { Set($0) } ?? []
+    @Query private var paidQuarters: [PaidQuarter]
 
     var quarters: [Quarter] {
         Quarter.allQuarters(for: trips)
@@ -18,27 +18,32 @@ struct QuarterListView: View {
                         quarter: quarter,
                         trips: quarter.trips(from: trips),
                         isPaid: Binding(
-                            get: { paidQuarters.contains(quarter.id) },
+                            get: { isQuarterPaid(quarter.id) },
                             set: { newValue in
                                 if newValue {
-                                    paidQuarters.insert(quarter.id)
-                                } else {
-                                    paidQuarters.remove(quarter.id)
+                                    let pq = PaidQuarter(quarterID: quarter.id)
+                                    context.insert(pq)
+                                } else if let existing = paidQuarters.first(where: { $0.quarterID == quarter.id }) {
+                                    context.delete(existing)
                                 }
-                                UserDefaults.standard.set(Array(paidQuarters), forKey: "paidQuarters")
+                                try? context.save()
                             }
                         )
                     )) {
                         QuarterRowView(
                             quarter: quarter,
                             trips: quarter.trips(from: trips),
-                            isPaid: paidQuarters.contains(quarter.id)
+                            isPaid: isQuarterPaid(quarter.id)
                         )
                     }
                 }
             }
             .navigationTitle("Quarters")
         }
+    }
+
+    private func isQuarterPaid(_ quarterID: String) -> Bool {
+        paidQuarters.contains { $0.quarterID == quarterID }
     }
 }
 

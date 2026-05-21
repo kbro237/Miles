@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var context
     @Query private var destinations: [FrequentDestination]
     @Query private var trips: [Trip]
+    @Query private var paidQuarters: [PaidQuarter]
 
     @State private var currentRate: Int = IRSRateService.currentYearDefaultRate
     @State private var isCheckingRate = false
@@ -103,7 +104,7 @@ struct SettingsView: View {
     }
 
     private func exportDatabase() {
-        guard let data = DatabaseExportService.exportData(trips: trips, destinations: destinations) else {
+        guard let data = DatabaseExportService.exportData(trips: trips, destinations: destinations, paidQuarters: paidQuarters) else {
             alertMessage = "Failed to export database."
             showingAlert = true
             return
@@ -156,6 +157,7 @@ struct SettingsView: View {
                 from: data,
                 existingTrips: trips,
                 existingDestinations: destinations,
+                existingPaidQuarters: paidQuarters,
                 context: context
             )
             alertMessage = "Database imported successfully."

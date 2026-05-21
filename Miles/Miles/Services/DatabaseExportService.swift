@@ -26,9 +26,8 @@ struct DatabaseExport: Codable {
 
 struct DatabaseExportService {
 
-    static func exportData(trips: [Trip], destinations: [FrequentDestination]) -> Data? {
-        let paidKey = "paidQuarters"
-        let paidQuarters = UserDefaults.standard.stringArray(forKey: paidKey) ?? []
+    static func exportData(trips: [Trip], destinations: [FrequentDestination], paidQuarters: [PaidQuarter]) -> Data? {
+        let paidQuarterIDs = paidQuarters.map { $0.quarterID }
 
         let export = DatabaseExport(
             trips: trips.map { trip in
@@ -47,7 +46,7 @@ struct DatabaseExportService {
             destinations: destinations.map {
                 DestinationExport(name: $0.name, address: $0.address)
             },
-            paidQuarters: paidQuarters
+            paidQuarters: paidQuarterIDs
         )
 
         let encoder = JSONEncoder()
@@ -60,6 +59,7 @@ struct DatabaseExportService {
         from data: Data,
         existingTrips: [Trip],
         existingDestinations: [FrequentDestination],
+        existingPaidQuarters: [PaidQuarter],
         context: ModelContext
     ) throws {
         let decoder = JSONDecoder()
@@ -71,6 +71,9 @@ struct DatabaseExportService {
         }
         for dest in existingDestinations {
             context.delete(dest)
+        }
+        for pq in existingPaidQuarters {
+            context.delete(pq)
         }
 
         var insertedDestinations: [FrequentDestination] = []
@@ -98,7 +101,10 @@ struct DatabaseExportService {
             context.insert(newTrip)
         }
 
+        for quarterID in export.paidQuarters {
+            context.insert(PaidQuarter(quarterID: quarterID))
+        }
+
         try context.save()
-        UserDefaults.standard.set(export.paidQuarters, forKey: "paidQuarters")
     }
 }
