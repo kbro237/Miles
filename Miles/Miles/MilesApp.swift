@@ -7,7 +7,7 @@ struct MilesApp: App {
         let schema = Schema([Trip.self, FrequentDestination.self, PaidQuarter.self])
         let config = ModelConfiguration(
             schema: schema,
-            cloudKitContainerIdentifier: "iCloud.com.miles.tracker"
+            isStoredInMemoryOnly: false
         )
         do {
             let container = try ModelContainer(for: schema, configurations: [config])
