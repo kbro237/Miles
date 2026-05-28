@@ -25,7 +25,7 @@ struct TripDetailView: View {
             }
 
             Section("Reimbursement") {
-                LabeledContent("Rate", value: "\(trip.rateCentsPerMile)¢/mile")
+                LabeledContent("Rate", value: "\(String(format: "%.1f", trip.rateCentsPerMile))¢/mile")
                 LabeledContent("Total", value: trip.reimbursementTotal, format: .currency(code: "USD"))
             }
 

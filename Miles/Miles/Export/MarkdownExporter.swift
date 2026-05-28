@@ -20,7 +20,7 @@ struct MarkdownExporter {
             md += "| \(escapeMarkdown(trip.destinationAddress)) "
             md += "| \(String(format: "%.1f", dist)) "
             md += "| \(trip.isRoundTrip ? "Yes" : "No") "
-            md += "| \(trip.rateCentsPerMile)¢ "
+            md += "| \(String(format: "%.1f", trip.rateCentsPerMile))¢ "
             md += "| $\(String(format: "%.2f", amt)) "
             md += "| \(escapeMarkdown(trip.purpose)) |\n"
         }

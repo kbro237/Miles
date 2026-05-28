@@ -7,7 +7,7 @@ final class Trip {
     var purpose: String
     var distanceMiles: Double
     var isRoundTrip: Bool
-    var rateCentsPerMile: Int
+    var rateCentsPerMile: Double
     var originAddress: String
     var destinationAddress: String
     var notes: String?
@@ -18,7 +18,7 @@ final class Trip {
         purpose: String = "",
         distanceMiles: Double = 0,
         isRoundTrip: Bool = false,
-        rateCentsPerMile: Int = 0,
+        rateCentsPerMile: Double = 0,
         originAddress: String = "",
         destinationAddress: String = "",
         notes: String? = nil,
@@ -45,7 +45,7 @@ final class Trip {
 
     var reimbursementTotal: Double {
         let miles = effectiveDistanceRounded
-        let rate = Double(rateCentsPerMile) / 100.0
+        let rate = rateCentsPerMile / 100.0
         return (miles * rate).roundedTo2dp
     }
 }

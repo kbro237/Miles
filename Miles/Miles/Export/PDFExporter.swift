@@ -121,7 +121,7 @@ struct PDFSummaryView: View {
                         Spacer()
 
                         VStack(alignment: .trailing, spacing: 1) {
-                            Text("\(trip.rateCentsPerMile)¢")
+                            Text("\(String(format: "%.1f", trip.rateCentsPerMile))¢")
                                 .font(.system(size: 9))
                             Text(String(format: "%.1f mi", trip.effectiveDistanceRounded))
                                 .font(.system(size: 9))

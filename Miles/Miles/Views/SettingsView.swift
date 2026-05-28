@@ -8,7 +8,7 @@ struct SettingsView: View {
     @Query private var trips: [Trip]
     @Query private var paidQuarters: [PaidQuarter]
 
-    @State private var currentRate: Int = IRSRateService.currentDefaultRate
+    @State private var currentRate: Double = IRSRateService.currentDefaultRate
     @State private var isCheckingRate = false
     @State private var rateText: String = ""
     @State private var showingDestinations = false
@@ -49,7 +49,7 @@ struct SettingsView: View {
             Text(alertMessage)
         }
         .onAppear {
-            rateText = IRSRateService.isManual ? String(IRSRateService.manualOverride) : ""
+            rateText = IRSRateService.isManual ? String(format: "%.1f", IRSRateService.manualOverride) : ""
             Task { await checkRate() }
         }
 #else
@@ -82,7 +82,7 @@ struct SettingsView: View {
                 Text(alertMessage)
             }
             .onAppear {
-                rateText = IRSRateService.isManual ? String(IRSRateService.manualOverride) : ""
+                rateText = IRSRateService.isManual ? String(format: "%.1f", IRSRateService.manualOverride) : ""
                 Task { await checkRate() }
             }
         }
@@ -100,7 +100,7 @@ struct SettingsView: View {
                             .keyboardType(.numberPad)
 #endif
                             .onChange(of: rateText) { _, newValue in
-                                if let value = Int(newValue), value > 0 {
+                                if let value = Double(newValue), value > 0 {
                                     IRSRateService.manualOverride = value
                                     currentRate = value
                                 }
@@ -155,7 +155,7 @@ struct SettingsView: View {
 
     private func checkRate() async {
         isCheckingRate = true
-        IRSRateService.manualOverride = 0
+        IRSRateService.manualOverride = 0.0
         let rate = await IRSRateService.fetchCurrentRate()
         currentRate = rate
         rateText = ""

@@ -4,8 +4,8 @@ struct IRSRateService {
 
     private static let manualKey = "manualRateCents"
 
-    static var currentDefaultRate: Int {
-        let manual = UserDefaults.standard.integer(forKey: manualKey)
+    static var currentDefaultRate: Double {
+        let manual = UserDefaults.standard.double(forKey: manualKey)
         if manual > 0 {
             return manual
         }
@@ -13,8 +13,8 @@ struct IRSRateService {
         return defaultRate(for: year)
     }
 
-    static var manualOverride: Int {
-        get { UserDefaults.standard.integer(forKey: manualKey) }
+    static var manualOverride: Double {
+        get { UserDefaults.standard.double(forKey: manualKey) }
         set { UserDefaults.standard.set(newValue, forKey: manualKey) }
     }
 
@@ -22,23 +22,23 @@ struct IRSRateService {
         manualOverride > 0
     }
 
-    static var currentYearDefaultRate: Int {
+    static var currentYearDefaultRate: Double {
         let year = Calendar.current.component(.year, from: Date())
         return defaultRate(for: year)
     }
 
-    static func defaultRate(for year: Int) -> Int {
+    static func defaultRate(for year: Int) -> Double {
         switch year {
-        case 2026: return 70
-        case 2025: return 70
-        case 2024: return 67
-        case 2023: return 65
-        case 2022: return 62
-        default: return 70
+        case 2026: return 72.5
+        case 2025: return 70.0
+        case 2024: return 67.0
+        case 2023: return 65.5
+        case 2022: return 62.0
+        default: return 70.0
         }
     }
 
-    static func fetchCurrentRate() async -> Int {
+    static func fetchCurrentRate() async -> Double {
         let currentYear = Calendar.current.component(.year, from: Date())
 
         guard let url = URL(string: "https://www.irs.gov/tax-professionals/standard-mileage-rates") else {
@@ -63,7 +63,7 @@ struct IRSRateService {
         }
     }
 
-    private static func parseRate(html: String, expectedYear: Int) -> Int? {
+    private static func parseRate(html: String, expectedYear: Int) -> Double? {
         let yearPrefix = "standard mileage rates for \(expectedYear)"
 
         guard let yearRange = html.range(of: yearPrefix, options: .caseInsensitive) else {
@@ -80,7 +80,7 @@ struct IRSRateService {
         var numberText = ""
         var foundDigit = false
         for char in afterBusiness {
-            if char.isNumber {
+            if char.isNumber || char == "." {
                 numberText.append(char)
                 foundDigit = true
             } else if foundDigit {
@@ -92,7 +92,7 @@ struct IRSRateService {
             }
         }
 
-        guard let rate = Int(numberText), rate > 0, rate < 200 else { return nil }
+        guard let rate = Double(numberText), rate > 0, rate < 200 else { return nil }
         return rate
     }
 }

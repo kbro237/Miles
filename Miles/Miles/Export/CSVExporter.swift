@@ -21,7 +21,7 @@ struct CSVExporter {
                 csv(trip.destinationAddress),
                 String(format: "%.1f", dist),
                 trip.isRoundTrip ? "Yes" : "No",
-                "\(trip.rateCentsPerMile)",
+                String(format: "%.1f", trip.rateCentsPerMile),
                 String(format: "%.2f", amt),
                 csv(trip.purpose)
             ].joined(separator: ","))

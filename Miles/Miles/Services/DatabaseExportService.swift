@@ -6,7 +6,7 @@ struct TripExport: Codable {
     var purpose: String
     var distanceMiles: Double
     var isRoundTrip: Bool
-    var rateCentsPerMile: Int
+    var rateCentsPerMile: Double
     var originAddress: String
     var destinationAddress: String
     var notes: String?
