@@ -14,7 +14,7 @@ struct TripFormView: View {
     @State private var destinationAddress: String = ""
     @State private var isRoundTrip: Bool = false
     @State private var distanceMiles: String = ""
-    @State private var rateCents: Int = IRSRateService.currentYearDefaultRate
+    @State private var rateCents: Int = IRSRateService.currentDefaultRate
     @State private var notes: String = ""
     @State private var selectedDestination: FrequentDestination?
 
@@ -155,7 +155,7 @@ struct TripFormView: View {
             notes = trip.notes ?? ""
             selectedDestination = trip.destination
         } else {
-            rateCents = IRSRateService.currentYearDefaultRate
+            rateCents = IRSRateService.currentDefaultRate
             Task {
                 let fetched = await IRSRateService.fetchCurrentRate()
                 rateCents = fetched

@@ -8,8 +8,9 @@ struct SettingsView: View {
     @Query private var trips: [Trip]
     @Query private var paidQuarters: [PaidQuarter]
 
-    @State private var currentRate: Int = IRSRateService.currentYearDefaultRate
+    @State private var currentRate: Int = IRSRateService.currentDefaultRate
     @State private var isCheckingRate = false
+    @State private var rateText: String = ""
     @State private var showingDestinations = false
     @State private var showingImporter = false
     @State private var showingImportConfirm = false
@@ -48,6 +49,7 @@ struct SettingsView: View {
             Text(alertMessage)
         }
         .onAppear {
+            rateText = IRSRateService.isManual ? String(IRSRateService.manualOverride) : ""
             Task { await checkRate() }
         }
 #else
@@ -80,6 +82,7 @@ struct SettingsView: View {
                 Text(alertMessage)
             }
             .onAppear {
+                rateText = IRSRateService.isManual ? String(IRSRateService.manualOverride) : ""
                 Task { await checkRate() }
             }
         }
@@ -90,9 +93,24 @@ struct SettingsView: View {
     private var content: some View {
         Section("IRS Mileage Rate") {
                     HStack {
-                        Text("Current Rate")
-                        Spacer()
-                        Text("\(currentRate)¢/mile")
+                        Text("Rate")
+                        TextField("", text: $rateText)
+                            .frame(width: 60)
+#if os(iOS)
+                            .keyboardType(.numberPad)
+#endif
+                            .onChange(of: rateText) { _, newValue in
+                                if let value = Int(newValue), value > 0 {
+                                    IRSRateService.manualOverride = value
+                                    currentRate = value
+                                }
+                            }
+                        Text("¢/mile")
+                            .foregroundStyle(.secondary)
+                    }
+                    if IRSRateService.isManual {
+                        Text("Using manual rate")
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                     }
 
@@ -137,8 +155,10 @@ struct SettingsView: View {
 
     private func checkRate() async {
         isCheckingRate = true
+        IRSRateService.manualOverride = 0
         let rate = await IRSRateService.fetchCurrentRate()
         currentRate = rate
+        rateText = ""
         isCheckingRate = false
     }
 

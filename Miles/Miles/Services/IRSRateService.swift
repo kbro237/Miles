@@ -2,6 +2,26 @@ import Foundation
 
 struct IRSRateService {
 
+    private static let manualKey = "manualRateCents"
+
+    static var currentDefaultRate: Int {
+        let manual = UserDefaults.standard.integer(forKey: manualKey)
+        if manual > 0 {
+            return manual
+        }
+        let year = Calendar.current.component(.year, from: Date())
+        return defaultRate(for: year)
+    }
+
+    static var manualOverride: Int {
+        get { UserDefaults.standard.integer(forKey: manualKey) }
+        set { UserDefaults.standard.set(newValue, forKey: manualKey) }
+    }
+
+    static var isManual: Bool {
+        manualOverride > 0
+    }
+
     static var currentYearDefaultRate: Int {
         let year = Calendar.current.component(.year, from: Date())
         return defaultRate(for: year)
@@ -22,13 +42,13 @@ struct IRSRateService {
         let currentYear = Calendar.current.component(.year, from: Date())
 
         guard let url = URL(string: "https://www.irs.gov/tax-professionals/standard-mileage-rates") else {
-            return currentYearDefaultRate
+            return currentDefaultRate
         }
 
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let html = String(data: data, encoding: .utf8) else {
-                return currentYearDefaultRate
+                return currentDefaultRate
             }
 
             if let rate = parseRate(html: html, expectedYear: currentYear) {
@@ -37,9 +57,9 @@ struct IRSRateService {
             if let rate = parseRate(html: html, expectedYear: currentYear - 1) {
                 return rate
             }
-            return currentYearDefaultRate
+            return currentDefaultRate
         } catch {
-            return currentYearDefaultRate
+            return currentDefaultRate
         }
     }
 
