@@ -44,6 +44,9 @@ struct TripListView: View {
         .sheet(isPresented: $showingForm) {
             TripFormView()
                 .id(sheetID)
+#if os(macOS)
+                .frame(minWidth: 400, minHeight: 500)
+#endif
         }
         .onReceive(NotificationCenter.default.publisher(for: .init("newTrip"))) { _ in
             sheetID = UUID()

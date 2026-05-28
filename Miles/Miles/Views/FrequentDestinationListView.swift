@@ -27,6 +27,9 @@ struct FrequentDestinationListView: View {
         }
         .sheet(isPresented: $showingForm) {
             FrequentDestinationFormView()
+#if os(macOS)
+                .frame(minWidth: 400, minHeight: 250)
+#endif
         }
 #else
         NavigationStack {

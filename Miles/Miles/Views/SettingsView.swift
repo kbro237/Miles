@@ -27,6 +27,9 @@ struct SettingsView: View {
         .navigationTitle("Settings")
         .sheet(isPresented: $showingDestinations) {
             FrequentDestinationListView()
+#if os(macOS)
+                .frame(minWidth: 450, minHeight: 350)
+#endif
         }
         .fileImporter(
             isPresented: $showingImporter,
