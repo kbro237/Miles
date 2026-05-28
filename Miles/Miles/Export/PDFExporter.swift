@@ -8,7 +8,12 @@ struct PDFExporter {
 
     @MainActor
     static func export(quarter: Quarter, trips: [Trip]) -> Data? {
-        let size = CGSize(width: 612, height: 792)
+        let pageSize = CGSize(width: 612, height: 792)
+        let scale: CGFloat = 0.9
+        let contentSize = CGSize(width: pageSize.width * scale, height: pageSize.height * scale)
+        let offsetX = (pageSize.width - contentSize.width) / 2
+        let offsetY = (pageSize.height - contentSize.height) / 2
+        let contentRect = CGRect(x: offsetX, y: offsetY, width: contentSize.width, height: contentSize.height)
         let sorted = trips.sorted(by: { $0.date < $1.date })
         let totalMiles = quarter.totalMiles(for: sorted)
         let totalReimbursement = quarter.totalReimbursement(for: sorted)
@@ -31,18 +36,24 @@ struct PDFExporter {
                 page: i + 1,
                 totalPages: totalPages
             )
-            .frame(width: size.width, height: size.height)
+            .frame(width: contentSize.width, height: contentSize.height)
             .id(UUID())
             let renderer = ImageRenderer(content: view)
             renderer.scale = 2.0
             guard let cgImage = renderer.cgImage else { continue }
-            let image = NSImage(cgImage: cgImage, size: size)
-            guard let pdfPage = PDFPage(image: image) else { continue }
+            let contentImage = NSImage(cgImage: cgImage, size: contentSize)
+
+            let pageImage = NSImage(size: pageSize)
+            pageImage.lockFocus()
+            contentImage.draw(in: contentRect)
+            pageImage.unlockFocus()
+
+            guard let pdfPage = PDFPage(image: pageImage) else { continue }
             doc.insert(pdfPage, at: doc.pageCount)
         }
         return doc.dataRepresentation()
 #else
-        let pdfRenderer = UIGraphicsPDFRenderer(bounds: CGRect(origin: .zero, size: size))
+        let pdfRenderer = UIGraphicsPDFRenderer(bounds: CGRect(origin: .zero, size: pageSize))
         return pdfRenderer.pdfData { ctx in
             for (i, pageTrips) in pages.enumerated() {
                 let view = PDFSummaryView(
@@ -53,12 +64,12 @@ struct PDFExporter {
                     page: i + 1,
                     totalPages: totalPages
                 )
-                .frame(width: size.width, height: size.height)
+                .frame(width: contentSize.width, height: contentSize.height)
                 let renderer = ImageRenderer(content: view)
                 renderer.scale = 2.0
                 guard let image = renderer.uiImage else { continue }
                 ctx.beginPage()
-                image.draw(in: CGRect(origin: .zero, size: size))
+                image.draw(in: contentRect)
             }
         }
 #endif
@@ -149,6 +160,5 @@ struct PDFSummaryView: View {
             }
         }
         .padding(24)
-        .frame(width: 612, height: 792, alignment: .topLeading)
     }
 }
