@@ -10,6 +10,8 @@ struct PDFExporter {
     static func export(quarter: Quarter, trips: [Trip]) -> Data? {
         let size = CGSize(width: 612, height: 792)
         let sorted = trips.sorted(by: { $0.date < $1.date })
+        let totalMiles = quarter.totalMiles(for: sorted)
+        let totalReimbursement = quarter.totalReimbursement(for: sorted)
         let pages: [[Trip]] = {
             if sorted.isEmpty { return [[]] }
             return stride(from: 0, to: sorted.count, by: tripsPerPage).map {
@@ -24,6 +26,8 @@ struct PDFExporter {
             let view = PDFSummaryView(
                 quarter: quarter,
                 trips: pageTrips,
+                totalMiles: totalMiles,
+                totalReimbursement: totalReimbursement,
                 page: i + 1,
                 totalPages: totalPages
             )
@@ -44,6 +48,8 @@ struct PDFExporter {
                 let view = PDFSummaryView(
                     quarter: quarter,
                     trips: pageTrips,
+                    totalMiles: totalMiles,
+                    totalReimbursement: totalReimbursement,
                     page: i + 1,
                     totalPages: totalPages
                 )
@@ -62,6 +68,8 @@ struct PDFExporter {
 struct PDFSummaryView: View {
     let quarter: Quarter
     let trips: [Trip]
+    var totalMiles: Double = 0
+    var totalReimbursement: Double = 0
     var page: Int = 1
     var totalPages: Int = 1
 
@@ -73,9 +81,6 @@ struct PDFSummaryView: View {
                 Text("Mileage Report — \(quarter.displayString)")
                     .font(.system(size: 16, weight: .bold))
                     .padding(.bottom, 4)
-
-                let totalMiles = quarter.totalMiles(for: trips)
-                let totalReimbursement = quarter.totalReimbursement(for: trips)
 
                 HStack {
                     Text("Total Miles: \(String(format: "%.1f", totalMiles))")
