@@ -3,6 +3,7 @@ import SwiftUI
 #if os(macOS)
 struct ContentView: View {
     @State private var selectedSection: String? = "trips"
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
         NavigationSplitView {
@@ -15,12 +16,17 @@ struct ContentView: View {
             .listStyle(.sidebar)
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
         } detail: {
-            switch selectedSection {
-            case "trips": TripListView()
-            case "quarters": QuarterListView()
-            case "settings": SettingsView()
-            default: Color.clear
+            NavigationStack(path: $navigationPath) {
+                switch selectedSection {
+                case "trips": TripListView()
+                case "quarters": QuarterListView()
+                case "settings": SettingsView()
+                default: Color.clear
+                }
             }
+        }
+        .onChange(of: selectedSection) {
+            navigationPath = NavigationPath()
         }
     }
 }
