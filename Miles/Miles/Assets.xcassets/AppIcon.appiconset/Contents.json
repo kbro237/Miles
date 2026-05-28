@@ -29,11 +29,6 @@
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
-    },
-    {
-      "filename" : "icon-1024.png",
-      "idiom" : "mac",
-      "size" : "1024x1024"
     }
   ],
   "info" : {
