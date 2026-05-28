@@ -4,7 +4,7 @@ import PDFKit
 #endif
 
 struct PDFExporter {
-    private static let tripsPerPage = 15
+    private static let tripsPerPage = 12
 
     @MainActor
     static func export(quarter: Quarter, trips: [Trip]) -> Data? {
@@ -28,13 +28,11 @@ struct PDFExporter {
                 totalPages: totalPages
             )
             .frame(width: size.width, height: size.height)
-            let hostingView = NSHostingView(rootView: view)
-            hostingView.frame = CGRect(origin: .zero, size: size)
-            hostingView.layout()
-            guard let rep = hostingView.bitmapImageRepForCachingDisplay(in: hostingView.bounds) else { continue }
-            hostingView.cacheDisplay(in: hostingView.bounds, to: rep)
-            let image = NSImage(size: size)
-            image.addRepresentation(rep)
+            .id(UUID())
+            let renderer = ImageRenderer(content: view)
+            renderer.scale = 2.0
+            guard let cgImage = renderer.cgImage else { continue }
+            let image = NSImage(cgImage: cgImage, size: size)
             guard let pdfPage = PDFPage(image: image) else { continue }
             doc.insert(pdfPage, at: doc.pageCount)
         }
