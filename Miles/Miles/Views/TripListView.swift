@@ -15,6 +15,13 @@ struct TripListView: View {
                 NavigationLink(destination: TripDetailView(trip: trip)) {
                     TripRowView(trip: trip)
                 }
+#if os(macOS)
+                .contextMenu {
+                    Button("Delete Trip") {
+                        context.delete(trip)
+                    }
+                }
+#endif
             }
             .onDelete { indexSet in
                 for index in indexSet {

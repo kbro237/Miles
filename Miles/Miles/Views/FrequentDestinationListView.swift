@@ -113,6 +113,16 @@ struct FrequentDestinationListView: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+#if os(macOS)
+                        .contextMenu {
+                            Button("Delete") {
+                                if defaultOrigin == dest.address {
+                                    defaultOrigin = ""
+                                }
+                                context.delete(dest)
+                            }
+                        }
+#endif
                     }
                     .onDelete { indexSet in
                         for index in indexSet {
