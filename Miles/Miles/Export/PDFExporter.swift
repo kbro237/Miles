@@ -28,10 +28,14 @@ struct PDFExporter {
                 totalPages: totalPages
             )
             .frame(width: size.width, height: size.height)
-            let renderer = ImageRenderer(content: view)
-            renderer.scale = 2.0
-            guard let image = renderer.nsImage,
-                  let pdfPage = PDFPage(image: image) else { continue }
+            let hostingView = NSHostingView(rootView: view)
+            hostingView.frame = CGRect(origin: .zero, size: size)
+            hostingView.layout()
+            guard let rep = hostingView.bitmapImageRepForCachingDisplay(in: hostingView.bounds) else { continue }
+            hostingView.cacheDisplay(in: hostingView.bounds, to: rep)
+            let image = NSImage(size: size)
+            image.addRepresentation(rep)
+            guard let pdfPage = PDFPage(image: image) else { continue }
             doc.insert(pdfPage, at: doc.pageCount)
         }
         return doc.dataRepresentation()
