@@ -32,6 +32,8 @@ struct MarkdownExporter {
     }
 
     private static func escapeMarkdown(_ text: String) -> String {
-        text.replacingOccurrences(of: "|", with: "\\|")
+        text
+            .replacingOccurrences(of: "|", with: "\\|")
+            .replacingOccurrences(of: "\n", with: " ")
     }
 }
