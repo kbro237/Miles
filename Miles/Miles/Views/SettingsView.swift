@@ -112,7 +112,7 @@ struct SettingsView: View {
                             .focused($rateFieldFocused)
 #endif
                             .onChange(of: rateText) { _, newValue in
-                                if let value = Double(newValue), value > 0 {
+                                if let value = NumberFormatter().number(from: newValue)?.doubleValue, value > 0 {
                                     IRSRateService.manualOverride = value
                                     currentRate = value
                                 }

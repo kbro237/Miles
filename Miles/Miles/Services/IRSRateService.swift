@@ -5,7 +5,7 @@ struct IRSRateService {
     private static let manualKey = "manualRateCents"
 
     static var currentDefaultRate: Double {
-        let manual = UserDefaults.standard.double(forKey: manualKey)
+        let manual = manualOverride
         if manual > 0 {
             return manual
         }
@@ -14,8 +14,14 @@ struct IRSRateService {
     }
 
     static var manualOverride: Double {
-        get { UserDefaults.standard.double(forKey: manualKey) }
-        set { UserDefaults.standard.set(newValue, forKey: manualKey) }
+        get {
+            guard let str = UserDefaults.standard.string(forKey: manualKey),
+                  let value = Double(str) else { return 0 }
+            return value
+        }
+        set {
+            UserDefaults.standard.set(newValue > 0 ? String(newValue) : "", forKey: manualKey)
+        }
     }
 
     static var isManual: Bool {
