@@ -90,9 +90,12 @@ struct SettingsView: View {
                 Task { await checkRate() }
             }
             .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") { rateFieldFocused = false }
+                if rateFieldFocused {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            rateFieldFocused = false
+                        }
+                    }
                 }
             }
         }
