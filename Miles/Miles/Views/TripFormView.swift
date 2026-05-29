@@ -213,10 +213,6 @@ struct TripFormView: View {
             selectedDestination = trip.destination
         } else {
             rateCents = IRSRateService.currentDefaultRate
-            Task {
-                let fetched = await IRSRateService.fetchCurrentRate()
-                rateCents = fetched
-            }
             if !defaultOrigin.isEmpty && originAddress.isEmpty {
                 originAddress = defaultOrigin
             }
