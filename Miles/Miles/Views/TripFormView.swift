@@ -25,6 +25,7 @@ struct TripFormView: View {
     @State private var alertMessage = ""
 
     @Query private var destinations: [FrequentDestination]
+    @Query private var allTrips: [Trip]
     @AppStorage("defaultOrigin") private var defaultOrigin: String = ""
 
     private var isEditing: Bool { editing != nil }
@@ -85,8 +86,56 @@ struct TripFormView: View {
         Section("Trip Details") {
             DatePicker("Date", selection: $date, displayedComponents: .date)
 
-                    TextField("Purpose", text: $purpose)
+            VStack(alignment: .leading, spacing: 0) {
+                TextField("Purpose", text: $purpose)
+#if os(iOS)
+                    .keyboardType(.default)
+#endif
+
+                if !purpose.isEmpty {
+                    let suggestions = uniquePurposes.filter {
+                        $0.localizedCaseInsensitiveContains(purpose) && $0.localizedCaseInsensitiveCompare(purpose) != .orderedSame
+                    }
+                    if !suggestions.isEmpty {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(suggestions.prefix(5), id: \.self) { suggestion in
+                                Button(action: { purpose = suggestion }) {
+                                    HStack {
+                                        Image(systemName: "clock")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        Text(suggestion)
+                                            .font(.body)
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 10)
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                Divider()
+                            }
+                        }
+#if os(iOS)
+                        .background(Color(.systemBackground))
+#else
+                        .background(Color(nsColor: .windowBackgroundColor))
+#endif
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+#if os(iOS)
+                                .stroke(Color(.separator), lineWidth: 1)
+#else
+                                .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
+#endif
+                        )
+                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+                        .padding(.top, 4)
+                    }
                 }
+            }
+        }
 
                 Section("Route") {
                     AutocompleteAddressField(
@@ -142,6 +191,14 @@ struct TripFormView: View {
                         .lineLimit(3...6)
                 }
             }
+
+    private var uniquePurposes: [String] {
+        let purposes = allTrips
+            .filter { $0 != editing }
+            .compactMap { $0.purpose.isEmpty ? nil : $0.purpose }
+        let unique = Array(Set(purposes))
+        return unique.sorted()
+    }
 
     private func populateFields() {
         if let trip = editing {
