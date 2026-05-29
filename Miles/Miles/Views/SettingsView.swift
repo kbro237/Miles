@@ -53,8 +53,7 @@ struct SettingsView: View {
             Text(alertMessage)
         }
         .onAppear {
-            rateText = IRSRateService.isManual ? String(format: "%.1f", IRSRateService.manualOverride) : ""
-            Task { await checkRate() }
+            refreshRateDisplay()
         }
 #else
         NavigationStack {
@@ -86,8 +85,7 @@ struct SettingsView: View {
                 Text(alertMessage)
             }
             .onAppear {
-                rateText = IRSRateService.isManual ? String(format: "%.1f", IRSRateService.manualOverride) : ""
-                Task { await checkRate() }
+                refreshRateDisplay()
             }
             .toolbar {
                 if rateFieldFocused {
@@ -174,6 +172,11 @@ struct SettingsView: View {
         currentRate = rate
         rateText = ""
         isCheckingRate = false
+    }
+
+    private func refreshRateDisplay() {
+        currentRate = IRSRateService.currentDefaultRate
+        rateText = IRSRateService.isManual ? String(format: "%.1f", IRSRateService.manualOverride) : ""
     }
 
     private func exportDatabase() {
