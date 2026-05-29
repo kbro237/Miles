@@ -89,6 +89,12 @@ struct SettingsView: View {
                 rateText = IRSRateService.isManual ? String(format: "%.1f", IRSRateService.manualOverride) : ""
                 Task { await checkRate() }
             }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { rateFieldFocused = false }
+                }
+            }
         }
 #endif
     }
@@ -103,14 +109,6 @@ struct SettingsView: View {
 #if os(iOS)
                             .keyboardType(.decimalPad)
                             .focused($rateFieldFocused)
-                            .toolbar {
-                                ToolbarItemGroup(placement: .keyboard) {
-                                    Spacer()
-                                    Button("Done") {
-                                        rateFieldFocused = false
-                                    }
-                                }
-                            }
 #endif
                             .onChange(of: rateText) { _, newValue in
                                 if let value = Double(newValue), value > 0 {
