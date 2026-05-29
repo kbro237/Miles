@@ -12,6 +12,7 @@ struct SettingsView: View {
     @State private var isCheckingRate = false
     @State private var rateText: String = ""
     @State private var showingDestinations = false
+    @FocusState private var rateFieldFocused: Bool
     @State private var showingImporter = false
     @State private var showingImportConfirm = false
     @State private var pendingImportData: Data?
@@ -100,7 +101,16 @@ struct SettingsView: View {
                         TextField("", text: $rateText)
                             .frame(width: 60)
 #if os(iOS)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.decimalPad)
+                            .focused($rateFieldFocused)
+                            .toolbar {
+                                ToolbarItemGroup(placement: .keyboard) {
+                                    Spacer()
+                                    Button("Done") {
+                                        rateFieldFocused = false
+                                    }
+                                }
+                            }
 #endif
                             .onChange(of: rateText) { _, newValue in
                                 if let value = Double(newValue), value > 0 {
