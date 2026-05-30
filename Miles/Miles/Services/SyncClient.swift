@@ -13,7 +13,14 @@ final class CloudflareSyncClient: SyncProvider {
 
     init(token: String, endpoint: URL, device: String, defaults: UserDefaults = .standard) {
         self.token = token
-        self.endpoint = endpoint
+        var url = endpoint
+        if url.absoluteString.hasSuffix("/") {
+            var comps = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            let trimmed = String(comps?.path.dropLast() ?? "")
+            comps?.path = trimmed
+            if let cleaned = comps?.url { url = cleaned }
+        }
+        self.endpoint = url
         self.device = device
         self.defaults = defaults
     }
@@ -25,7 +32,7 @@ final class CloudflareSyncClient: SyncProvider {
             "device": device,
             "versions": versions,
         ]
-        let data = try await post(path: "/sync/pull", body: body)
+        let data = try await post(apiPath: "/sync/pull", body: body)
         let response = try JSONDecoder().decode(PullResponse.self, from: data)
         var result: [String: (value: String, version: Int)] = [:]
         for entry in response.entries {
@@ -44,7 +51,7 @@ final class CloudflareSyncClient: SyncProvider {
             "device": device,
             "entries": entriesJSON,
         ]
-        let data = try await post(path: "/sync/push", body: body)
+        let data = try await post(apiPath: "/sync/push", body: body)
         let response = try JSONDecoder().decode(PushResponse.self, from: data)
         var result: [String: Int] = [:]
         for resolved in response.resolved {
@@ -54,8 +61,12 @@ final class CloudflareSyncClient: SyncProvider {
         return result
     }
 
-    private func post(path: String, body: [String: Any]) async throws -> Data {
-        var request = URLRequest(url: endpoint.appendingPathComponent(path))
+    private func post(apiPath: String, body: [String: Any]) async throws -> Data {
+        var comps = URLComponents()
+        comps.scheme = endpoint.scheme
+        comps.host = endpoint.host
+        comps.path = endpoint.path + "/" + apiPath
+        var request = URLRequest(url: comps.url!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
