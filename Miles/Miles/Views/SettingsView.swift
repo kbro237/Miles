@@ -235,6 +235,10 @@ struct SettingsView: View {
 
     private func performImport() {
         guard let data = pendingImportData else { return }
+        if let backup = DatabaseExportService.exportData(trips: trips, destinations: destinations, paidQuarters: paidQuarters) {
+            let backupURL = FileManager.default.temporaryDirectory.appendingPathComponent("Miles-pre-import-backup.json")
+            try? backup.write(to: backupURL)
+        }
         do {
             try DatabaseExportService.importData(
                 from: data,
