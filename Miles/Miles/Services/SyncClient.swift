@@ -13,14 +13,7 @@ final class CloudflareSyncClient: SyncProvider {
 
     init(token: String, endpoint: URL, device: String, defaults: UserDefaults = .standard) {
         self.token = token
-        var url = endpoint
-        if url.absoluteString.hasSuffix("/") {
-            var comps = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            let trimmed = String(comps?.path.dropLast() ?? "")
-            comps?.path = trimmed
-            if let cleaned = comps?.url { url = cleaned }
-        }
-        self.endpoint = url
+        self.endpoint = endpoint
         self.device = device
         self.defaults = defaults
     }
@@ -62,11 +55,11 @@ final class CloudflareSyncClient: SyncProvider {
     }
 
     private func post(apiPath: String, body: [String: Any]) async throws -> Data {
-        var comps = URLComponents()
-        comps.scheme = endpoint.scheme
-        comps.host = endpoint.host
-        comps.path = endpoint.path + "/" + apiPath
-        var request = URLRequest(url: comps.url!)
+        let urlString = endpoint.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        guard let url = URL(string: "\(urlString)/\(apiPath)") else {
+            throw SyncError.badResponse
+        }
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
