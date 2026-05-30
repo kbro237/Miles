@@ -54,59 +54,46 @@ struct SyncService {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
-        if let tripsData = remote["trips"]?.value,
-           let data = tripsData.data(using: .utf8),
-           let export = try? decoder.decode(DatabaseExport.self, from: data) {
-            for trip in trips { context.delete(trip) }
-            for dest in destinations { context.delete(dest) }
-            for pq in paidQuarters { context.delete(pq) }
-            var insertedDests: [FrequentDestination] = []
-            for d in export.destinations {
-                let dest = FrequentDestination(name: d.name, address: d.address)
-                context.insert(dest)
-                insertedDests.append(dest)
-            }
-            for t in export.trips {
-                let trip = Trip(
-                    date: t.date,
-                    purpose: t.purpose,
-                    distanceMiles: t.distanceMiles,
-                    isRoundTrip: t.isRoundTrip,
-                    rateCentsPerMile: t.rateCentsPerMile,
-                    originAddress: t.originAddress,
-                    destinationAddress: t.destinationAddress,
-                    notes: t.notes
-                )
-                if let destName = t.destinationName,
-                   let matched = insertedDests.first(where: { $0.name == destName }) {
-                    trip.destination = matched
-                }
-                context.insert(trip)
-            }
-            for qid in export.paidQuarters {
-                context.insert(PaidQuarter(quarterID: qid))
-            }
-            try context.save()
+        guard let tripsData = remote["trips"]?.value,
+              let data = tripsData.data(using: .utf8) else { return false }
+
+        let export: DatabaseExport
+        do {
+            export = try decoder.decode(DatabaseExport.self, from: data)
+        } catch {
+            throw SyncError.decodingFailed(error)
         }
 
-        if let destsData = remote["destinations"]?.value,
-           let data = destsData.data(using: .utf8),
-           let dests = try? JSONDecoder().decode([DestinationExport].self, from: data) {
-            for dest in destinations { context.delete(dest) }
-            for d in dests {
-                context.insert(FrequentDestination(name: d.name, address: d.address))
-            }
-        }
+        for trip in trips { context.delete(trip) }
+        for dest in destinations { context.delete(dest) }
+        for pq in paidQuarters { context.delete(pq) }
 
-        if let pqData = remote["paidQuarters"]?.value,
-           let data = pqData.data(using: .utf8),
-           let ids = try? JSONDecoder().decode([String].self, from: data) {
-            for pq in paidQuarters { context.delete(pq) }
-            for id in ids {
-                context.insert(PaidQuarter(quarterID: id))
-            }
+        var insertedDests: [FrequentDestination] = []
+        for d in export.destinations {
+            let dest = FrequentDestination(name: d.name, address: d.address)
+            context.insert(dest)
+            insertedDests.append(dest)
         }
-
+        for t in export.trips {
+            let trip = Trip(
+                date: t.date,
+                purpose: t.purpose,
+                distanceMiles: t.distanceMiles,
+                isRoundTrip: t.isRoundTrip,
+                rateCentsPerMile: t.rateCentsPerMile,
+                originAddress: t.originAddress,
+                destinationAddress: t.destinationAddress,
+                notes: t.notes
+            )
+            if let destName = t.destinationName,
+               let matched = insertedDests.first(where: { $0.name == destName }) {
+                trip.destination = matched
+            }
+            context.insert(trip)
+        }
+        for qid in export.paidQuarters {
+            context.insert(PaidQuarter(quarterID: qid))
+        }
         try context.save()
         return true
     }

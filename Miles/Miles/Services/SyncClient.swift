@@ -81,12 +81,14 @@ enum SyncError: LocalizedError {
     case badResponse(status: Int, url: String)
     case notConfigured
     case badURL(String)
+    case decodingFailed(Error)
 
     var errorDescription: String? {
         switch self {
-        case .badResponse(let status, let url): return "Sync server returned HTTP \(status) for \(url)"
-        case .notConfigured: return "Sync is not configured. Set your token and endpoint in Settings."
-        case .badURL(let url): return "Invalid sync URL: \(url)"
+        case .badResponse(let status, let url): return "Sync server returned HTTP \(status) for \(url)."
+        case .notConfigured: return "Sync is not configured."
+        case .badURL(let url): return "Invalid sync URL: \(url)."
+        case .decodingFailed(let error): return "Failed to decode data: \(error.localizedDescription)"
         }
     }
 }
