@@ -57,7 +57,7 @@ final class CloudflareSyncClient: SyncProvider {
     private func post(apiPath: String, body: [String: Any]) async throws -> Data {
         let urlString = endpoint.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         guard let url = URL(string: "\(urlString)/\(apiPath)") else {
-            throw SyncError.badResponse
+            throw SyncError.badResponse(status: 0)
         }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -68,19 +68,20 @@ final class CloudflareSyncClient: SyncProvider {
 
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
-            throw SyncError.badResponse
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw SyncError.badResponse(status: status)
         }
         return data
     }
 }
 
 enum SyncError: LocalizedError {
-    case badResponse
+    case badResponse(status: Int)
     case notConfigured
 
     var errorDescription: String? {
         switch self {
-        case .badResponse: return "Sync server returned an error."
+        case .badResponse(let status): return "Sync server returned HTTP \(status)."
         case .notConfigured: return "Sync is not configured. Set your token and endpoint in Settings."
         }
     }
