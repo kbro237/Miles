@@ -8,7 +8,6 @@ struct SettingsView: View {
     @Query private var trips: [Trip]
     @Query private var paidQuarters: [PaidQuarter]
 
-    @State private var currentRate: Double = IRSRateService.currentDefaultRate
     @State private var isCheckingRate = false
     @State private var rateText: String = ""
     @State private var showingDestinations = false
@@ -115,7 +114,6 @@ struct SettingsView: View {
                                 let cleaned = newValue.replacingOccurrences(of: ",", with: ".")
                                 if let value = Double(cleaned), value > 0 {
                                     IRSRateService.manualOverride = value
-                                    currentRate = value
                                 }
                             }
                         Text("¢/mile")
@@ -169,14 +167,12 @@ struct SettingsView: View {
     private func checkRate() async {
         isCheckingRate = true
         IRSRateService.manualOverride = 0.0
-        let rate = await IRSRateService.fetchCurrentRate()
-        currentRate = rate
+        _ = await IRSRateService.fetchCurrentRate()
         rateText = ""
         isCheckingRate = false
     }
 
     private func refreshRateDisplay() {
-        currentRate = IRSRateService.currentDefaultRate
         rateText = IRSRateService.isManual ? String(format: "%.1f", IRSRateService.manualOverride) : ""
     }
 
@@ -195,8 +191,9 @@ struct SettingsView: View {
             return
         }
 #if os(macOS)
+        guard let contentView = NSApp.keyWindow?.contentView else { return }
         NSSharingServicePicker(items: [url])
-            .show(relativeTo: .zero, of: NSApp.keyWindow?.contentView ?? NSView(), preferredEdge: .minY)
+            .show(relativeTo: .zero, of: contentView, preferredEdge: .minY)
 #else
         let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

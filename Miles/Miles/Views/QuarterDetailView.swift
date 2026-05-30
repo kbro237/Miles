@@ -56,8 +56,9 @@ struct QuarterDetailView: View {
 
     private func share(url: URL) {
 #if os(macOS)
+        guard let contentView = NSApp.keyWindow?.contentView else { return }
         NSSharingServicePicker(items: [url])
-            .show(relativeTo: .zero, of: NSApp.keyWindow?.contentView ?? NSView(), preferredEdge: .minY)
+            .show(relativeTo: .zero, of: contentView, preferredEdge: .minY)
 #else
         let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

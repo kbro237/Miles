@@ -94,7 +94,7 @@ struct TripFormView: View {
 
                 if !purpose.isEmpty {
                     let suggestions = uniquePurposes.filter {
-                        $0.localizedCaseInsensitiveContains(purpose) && $0.localizedCaseInsensitiveCompare(purpose) != .orderedSame
+                        $0.localizedCaseInsensitiveContains(purpose)
                     }
                     if !suggestions.isEmpty {
                         VStack(alignment: .leading, spacing: 0) {
