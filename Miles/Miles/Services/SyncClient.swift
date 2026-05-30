@@ -55,7 +55,8 @@ final class CloudflareSyncClient: SyncProvider {
     }
 
     private func post(apiPath: String, body: [String: Any]) async throws -> Data {
-        let urlString = endpoint.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        var urlString = endpoint.absoluteString
+        while urlString.hasSuffix("/") { urlString.removeLast() }
         guard let url = URL(string: "\(urlString)/\(apiPath)") else {
             throw SyncError.badResponse(status: 0)
         }
