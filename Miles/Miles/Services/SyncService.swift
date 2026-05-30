@@ -51,9 +51,12 @@ struct SyncService {
         let remote = try await provider.pull()
         guard !remote.isEmpty else { return false }
 
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
         if let tripsData = remote["trips"]?.value,
            let data = tripsData.data(using: .utf8),
-           let export = try? JSONDecoder().decode(DatabaseExport.self, from: data) {
+           let export = try? decoder.decode(DatabaseExport.self, from: data) {
             for trip in trips { context.delete(trip) }
             for dest in destinations { context.delete(dest) }
             for pq in paidQuarters { context.delete(pq) }
