@@ -36,21 +36,21 @@ struct QuarterDetailView: View {
     private func sharePDF() {
         guard let data = PDFExporter.export(quarter: quarter, trips: trips) else { return }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(quarter.id)-mileage.pdf")
-        try? data.write(to: url)
+        guard (try? data.write(to: url)) != nil else { return }
         share(url: url)
     }
 
     private func shareCSV() {
         let csv = CSVExporter.export(quarter: quarter, trips: trips)
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(quarter.id)-mileage.csv")
-        try? csv.write(to: url, atomically: true, encoding: .utf8)
+        guard (try? csv.write(to: url, atomically: true, encoding: .utf8)) != nil else { return }
         share(url: url)
     }
 
     private func shareMarkdown() {
         let md = MarkdownExporter.export(quarter: quarter, trips: trips)
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(quarter.id)-mileage.md")
-        try? md.write(to: url, atomically: true, encoding: .utf8)
+        guard (try? md.write(to: url, atomically: true, encoding: .utf8)) != nil else { return }
         share(url: url)
     }
 

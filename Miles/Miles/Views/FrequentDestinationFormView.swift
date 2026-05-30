@@ -70,6 +70,7 @@ struct FrequentDestinationFormView: View {
         }
         let dest = FrequentDestination(name: name, address: address)
         context.insert(dest)
+        try? context.save()
         dismiss()
     }
 

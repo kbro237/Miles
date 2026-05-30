@@ -42,7 +42,8 @@ struct MilesApp: App {
         guard !UserDefaults.standard.bool(forKey: migratedKey) else { return }
 
         let paidIDs = UserDefaults.standard.stringArray(forKey: "paidQuarters") ?? []
-        for id in paidIDs {
+        let existing = (try? context.fetch(FetchDescriptor<PaidQuarter>())) ?? []
+        for id in paidIDs where !existing.contains(where: { $0.quarterID == id }) {
             context.insert(PaidQuarter(quarterID: id))
         }
         try? context.save()

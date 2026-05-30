@@ -112,7 +112,8 @@ struct SettingsView: View {
                             .focused($rateFieldFocused)
 #endif
                             .onChange(of: rateText) { _, newValue in
-                                if let value = NumberFormatter().number(from: newValue)?.doubleValue, value > 0 {
+                                let cleaned = newValue.replacingOccurrences(of: ",", with: ".")
+                                if let value = Double(cleaned), value > 0 {
                                     IRSRateService.manualOverride = value
                                     currentRate = value
                                 }
@@ -186,7 +187,13 @@ struct SettingsView: View {
             return
         }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("Miles-backup.json")
-        try? data.write(to: url)
+        do {
+            try data.write(to: url)
+        } catch {
+            alertMessage = "Failed to write export file."
+            showingAlert = true
+            return
+        }
 #if os(macOS)
         NSSharingServicePicker(items: [url])
             .show(relativeTo: .zero, of: NSApp.keyWindow?.contentView ?? NSView(), preferredEdge: .minY)
