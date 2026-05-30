@@ -184,6 +184,13 @@ struct SettingsView: View {
                                 .foregroundStyle(.secondary)
                         }
 
+                        let versions = ["trips", "destinations", "paidQuarters"].map {
+                            "\($0): v\(UserDefaults.standard.integer(forKey: "sync_version_\($0)"))"
+                        }.joined(separator: ", ")
+                        Text(versions)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+
                         HStack {
                             Button("Pull from Server") {
                                 Task { await performPull() }
@@ -194,6 +201,13 @@ struct SettingsView: View {
                                 Task { await performPush() }
                             }
                             .disabled(isSyncing)
+                        }
+
+                        Button("Reset Sync State") {
+                            for key in ["trips", "destinations", "paidQuarters"] {
+                                UserDefaults.standard.removeObject(forKey: "sync_version_\(key)")
+                            }
+                            syncMessage = "Sync state reset. Next push/pull starts fresh."
                         }
 
                         if isSyncing {
