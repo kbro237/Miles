@@ -12,6 +12,10 @@ struct SettingsView: View {
     @State private var rateText: String = ""
     @State private var showingDestinations = false
     @FocusState private var rateFieldFocused: Bool
+    @State private var syncToken: String = SyncService.storedToken
+    @State private var syncEndpoint: String = SyncService.storedEndpoint
+    @State private var isSyncing = false
+    @State private var syncMessage = ""
     @State private var showingImporter = false
     @State private var showingImportConfirm = false
     @State private var pendingImportData: Data?
@@ -157,11 +161,112 @@ struct SettingsView: View {
                     }
                 }
 
+                Section("Sync") {
+                    TextField("Token", text: $syncToken)
+                        .font(.system(.caption, design: .monospaced))
+                    TextField("Endpoint URL", text: $syncEndpoint)
+                        .font(.system(.caption, design: .monospaced))
+#if os(iOS)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+#endif
+                    if !syncToken.isEmpty && !syncEndpoint.isEmpty {
+                        Button("Save Sync Config") {
+                            SyncService.configure(token: syncToken, endpoint: syncEndpoint)
+                            syncMessage = "Config saved."
+                        }
+                    }
+
+                    if SyncService.isConfigured {
+                        if !syncMessage.isEmpty {
+                            Text(syncMessage)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack {
+                            Button("Pull from Server") {
+                                Task { await performPull() }
+                            }
+                            .disabled(isSyncing)
+
+                            Button("Push to Server") {
+                                Task { await performPush() }
+                            }
+                            .disabled(isSyncing)
+                        }
+
+                        if isSyncing {
+                            HStack {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                Text("Syncing...")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+
+                        Button("Clear Sync Config") {
+                            SyncService.clearConfig()
+                            syncToken = ""
+                            syncEndpoint = ""
+                            syncMessage = ""
+                        }
+                    }
+                }
+
                 Section("About") {
                     LabeledContent("App", value: "Miles Mileage Tracker")
                     LabeledContent("Trips", value: "\(trips.count)")
                     LabeledContent("Destinations", value: "\(destinations.count)")
                 }
+    }
+
+    private func performPull() async {
+        isSyncing = true
+        syncMessage = ""
+        let service = SyncService()
+        guard let provider = service.makeProvider() else {
+            syncMessage = "Sync not configured."
+            isSyncing = false
+            return
+        }
+        do {
+            let changed = try await service.pull(
+                provider: provider,
+                trips: trips,
+                destinations: destinations,
+                paidQuarters: paidQuarters,
+                context: context
+            )
+            syncMessage = changed ? "Data pulled from server." : "No new data."
+        } catch {
+            syncMessage = "Pull failed: \(error.localizedDescription)"
+        }
+        isSyncing = false
+    }
+
+    private func performPush() async {
+        isSyncing = true
+        syncMessage = ""
+        let service = SyncService()
+        guard let provider = service.makeProvider() else {
+            syncMessage = "Sync not configured."
+            isSyncing = false
+            return
+        }
+        do {
+            try await service.push(
+                provider: provider,
+                trips: trips,
+                destinations: destinations,
+                paidQuarters: paidQuarters
+            )
+            syncMessage = "Data pushed to server."
+        } catch {
+            syncMessage = "Push failed: \(error.localizedDescription)"
+        }
+        isSyncing = false
     }
 
     private func checkRate() async {
